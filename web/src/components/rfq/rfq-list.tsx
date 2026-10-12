@@ -1,18 +1,130 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { Clock, Trash2 } from "lucide-react"
+import { Check, Clock, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { product } from "@/data"
+import { brand } from "@/config/brand"
 import { fmtDate, money, orderBy } from "@/lib/dates"
-import { buildRfqEmail } from "@/lib/rfq-email"
 import { lineTotal, nextTier, tierFor } from "@/lib/pricing"
 import type { Region, ShippingTerms } from "@/lib/types"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
-import { Modal } from "@/components/ui/modal"
+import { Modal, useModalClose } from "@/components/ui/modal"
 import { RfqListSkeleton } from "@/components/ui/skeleton"
 import { useRfq } from "@/stores/rfq"
+
+function ReviewModal({ onDone }: { onDone: (sent: { id: string; count: number } | null) => void }) {
+  const lines = useRfq((state) => state.lines)
+  const project = useRfq((state) => state.project)
+  const neededBy = useRfq((state) => state.neededBy)
+  const region = useRfq((state) => state.region)
+  const notes = useRfq((state) => state.notes)
+  const submit = useRfq((state) => state.submit)
+  const sent = useRef<{ id: string; count: number } | null>(null)
+  const selected = lines.filter((line) => line.selected)
+  const total = selected.reduce((sum, line) => sum + lineTotal(product(line.productId), line.qty), 0)
+
+  return (
+    <Modal label="Review RFQ" onClose={() => onDone(sent.current)} className="w-full max-w-[720px] rounded-[10px] bg-el-paper p-6 shadow-el-lg">
+      <p className="text-[11px] font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">Confirm request</p>
+      <h2 className="mt-2 font-heading text-[30px] leading-[38px]">{project.trim() || "Gift sourcing"}</h2>
+      <dl className="mt-5 grid grid-cols-3 gap-4 text-[13px]">
+        <div>
+          <dt className="text-[11px] tracking-[0.12em] text-el-taupe-ink uppercase">To</dt>
+          <dd className="mt-1">{brand.rfq.to}</dd>
+        </div>
+        <div>
+          <dt className="text-[11px] tracking-[0.12em] text-el-taupe-ink uppercase">Needed by</dt>
+          <dd className="mt-1">{fmtDate(neededBy)}</dd>
+        </div>
+        <div>
+          <dt className="text-[11px] tracking-[0.12em] text-el-taupe-ink uppercase">Region</dt>
+          <dd className="mt-1">{region}</dd>
+        </div>
+      </dl>
+      <table className="mt-6 w-full text-left text-[13px]">
+        <thead className="text-[11px] tracking-[0.12em] text-el-taupe-ink uppercase">
+          <tr>
+            <th className="py-2 font-semibold">Item</th>
+            <th className="py-2 font-semibold">Qty</th>
+            <th className="py-2 font-semibold">Unit</th>
+            <th className="py-2 font-semibold">Terms</th>
+          </tr>
+        </thead>
+        <tbody>
+          {selected.map((line) => {
+            const item = product(line.productId)
+            const tier = tierFor(item, line.qty)
+            return (
+              <tr key={line.productId} className="border-t border-el-line">
+                <td className="py-3">{item.name}</td>
+                <td className="py-3 tabular-nums">{line.qty.toLocaleString("en-US")}</td>
+                <td className="py-3 tabular-nums">{money(tier.unitPrice)}</td>
+                <td className="py-3">{line.terms}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+      {notes.trim() ? <p className="mt-4 text-[13px] leading-5 text-el-taupe-ink">Notes · {notes}</p> : null}
+      <p className="mt-5 text-[16px] font-semibold tabular-nums">Estimated total {money(total, 0)}</p>
+      <p className="mt-1 text-[12px] text-el-taupe-ink">Indicative pricing · Final quote from GoodFlow sales</p>
+      <SendButton
+        onSend={() => {
+          const result = submit()
+          if (!result.ok || !result.id) return false
+          sent.current = { id: result.id, count: selected.length }
+          toast("Request sent")
+          return true
+        }}
+      />
+    </Modal>
+  )
+}
+
+function SendButton({ onSend }: { onSend: () => boolean }) {
+  const close = useModalClose()
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        if (onSend()) close()
+      }}
+      className="mt-5 h-11 rounded-md bg-el-black px-6 text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase"
+    >
+      Send
+    </button>
+  )
+}
+
+function DoneButton() {
+  const close = useModalClose()
+  return (
+    <button
+      type="button"
+      onClick={close}
+      className="mt-6 h-11 rounded-md bg-el-black px-6 text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase"
+    >
+      Done
+    </button>
+  )
+}
+
+function SentModal({ sent, onDone }: { sent: { id: string; count: number }; onDone: () => void }) {
+  return (
+    <Modal label="Request sent" onClose={onDone} className="w-full max-w-[480px] rounded-[10px] bg-el-paper p-8 text-center shadow-el-lg">
+      <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-el-cream">
+        <Check className="size-5 text-el-gold-deep" strokeWidth={1.5} />
+      </span>
+      <h2 className="mt-5 font-heading text-[28px] leading-9">Request sent</h2>
+      <p className="mt-3 text-[14px] leading-6 text-el-taupe-ink">
+        {sent.count} {sent.count === 1 ? "item" : "items"} moved to History RFQ. Open Account center from the avatar menu to review it.
+      </p>
+      <DoneButton />
+    </Modal>
+  )
+}
 
 const TERMS: ShippingTerms[] = ["EXW", "FOB", "DAP"]
 const REGIONS: Region[] = ["APAC", "EMEA", "Americas", "Global"]
@@ -27,12 +139,13 @@ export function RfqList() {
   const update = useRfq((state) => state.update)
   const remove = useRfq((state) => state.remove)
   const setMeta = useRfq((state) => state.setMeta)
-  const [exporting, setExporting] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const submit = useRfq((state) => state.submit)
+  const [preview, setPreview] = useState(false)
+  const [sent, setSent] = useState<{ id: string; count: number } | null>(null)
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("export") !== "1") return
-    setExporting(true)
+    setPreview(true)
     const url = new URL(window.location.href)
     url.searchParams.delete("export")
     window.history.replaceState(null, "", url)
@@ -52,7 +165,7 @@ export function RfqList() {
   if (lines.length === 0) {
     return (
       <div className="py-20 text-center">
-        <h2 className="font-serif text-[24px] leading-8">Your RFQ List is empty</h2>
+        <h2 className="font-heading text-[24px] leading-8">Your RFQ List is empty</h2>
         <Link
           href="/categories"
           className="mt-6 inline-flex h-11 items-center rounded-md bg-el-black px-6 text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase"
@@ -63,7 +176,7 @@ export function RfqList() {
     )
   }
 
-  const email = buildRfqEmail({ project, neededBy, region, notes, lines })
+  const projectLabel = project.trim() || "Gift sourcing"
 
   return (
     <>
@@ -194,43 +307,25 @@ export function RfqList() {
           ) : null}
           <button
             type="button"
-            onClick={() => {
-              setCopied(false)
-              setExporting(true)
-            }}
-            className="mt-4 flex h-11 w-full items-center justify-center rounded-md bg-el-black text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase"
+            disabled={selected.length === 0}
+            onClick={() => setPreview(true)}
+            className="mt-4 flex h-11 w-full items-center justify-center rounded-md bg-el-black text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase disabled:opacity-40"
           >
-            Export RFQ
+            Review & send
           </button>
           <p className="mt-2 text-center text-[11px] text-el-taupe-ink">Indicative pricing · Final quote from GoodFlow sales</p>
         </aside>
       </div>
 
-      {exporting ? (
-        <Modal label="Export RFQ" onClose={() => setExporting(false)} className="w-full max-w-[720px] rounded-[10px] bg-el-paper p-6 shadow-el-lg">
-            <h2 className="font-serif text-[30px] leading-[38px]">Export RFQ</h2>
-            <label className="mt-4 block text-[12px] text-el-taupe-ink">
-              To
-              <input readOnly value={email.to} className="mt-1 h-10 w-full rounded-md border border-el-line bg-el-cream px-3 text-[14px]" />
-            </label>
-            <label className="mt-3 block text-[12px] text-el-taupe-ink">
-              Subject
-              <input readOnly value={email.subject} className="mt-1 h-10 w-full rounded-md border border-el-line px-3 text-[14px]" />
-            </label>
-            <textarea readOnly value={email.body} className="mt-3 h-[360px] w-full rounded-md border border-el-line p-3 font-mono text-[13px] leading-5" />
-            <button
-              type="button"
-              onClick={async () => {
-                await navigator.clipboard.writeText(`To: ${email.to}\nSubject: ${email.subject}\n\n${email.body}`)
-                setCopied(true)
-                toast("Copied to clipboard")
-              }}
-              className="mt-4 h-11 rounded-md bg-el-black px-6 text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase"
-            >
-              {copied ? "Copied" : "Copy email"}
-            </button>
-        </Modal>
+      {preview ? (
+        <ReviewModal
+          onDone={(next) => {
+            setPreview(false)
+            if (next) setSent(next)
+          }}
+        />
       ) : null}
+      {sent ? <SentModal sent={sent} onDone={() => setSent(null)} /> : null}
     </>
   )
 }

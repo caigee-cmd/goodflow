@@ -9,7 +9,7 @@ import { brand } from "@/config/brand"
 import { cn } from "@/lib/utils"
 import { useChat } from "@/stores/chat"
 import { useRfq } from "@/stores/rfq"
-import { HistoryDialog } from "@/components/account/history-dialog"
+import { Avatar, AvatarBadge, AvatarFallback } from "@/components/ui/avatar"
 import { Wordmark } from "./wordmark"
 
 const NAV = [
@@ -30,7 +30,6 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
   const reset = useRfq((state) => state.reset)
   const resetChat = useChat((state) => state.reset)
   const [menu, setMenu] = useState(false)
-  const [history, setHistory] = useState(false)
 
   return (
     <header className="sticky top-0 z-40 h-[72px] border-b border-el-line bg-el-canvas">
@@ -94,24 +93,22 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
               aria-label={brand.user.name}
               aria-expanded={menu}
               onClick={() => setMenu((open) => !open)}
-              className="flex size-9 items-center justify-center rounded-full border border-el-line bg-el-paper text-[12px] font-medium tracking-wide text-el-black"
+              className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-el-gold focus-visible:ring-offset-2 focus-visible:ring-offset-el-canvas"
             >
-              {brand.user.initials}
+              <Avatar size="lg" className="size-9 shadow-el-sm">
+                <AvatarFallback className="bg-[linear-gradient(145deg,#e8d4b0_0%,#c4a574_46%,#8c6b3e_100%)] font-heading text-[13px] tracking-[0.04em] text-el-black">
+                  {brand.user.initials}
+                </AvatarFallback>
+                <AvatarBadge className="bg-el-gold ring-el-canvas" />
+              </Avatar>
             </button>
             {menu ? (
               <div className="absolute top-11 right-0 w-64 rounded-lg border border-el-line bg-el-paper p-3 text-[13px] shadow-el-md">
                 <p className="font-medium">{brand.user.name}</p>
                 <p className="mt-1 text-[12px] text-el-taupe-ink">{brand.user.email}</p>
-                <button
-                  type="button"
-                  className="mt-3 block text-left hover:text-el-gold-deep"
-                  onClick={() => {
-                    setMenu(false)
-                    setHistory(true)
-                  }}
-                >
-                  History RFQ
-                </button>
+                <Link href="/account" className="mt-3 block hover:text-el-gold-deep" onClick={() => setMenu(false)}>
+                  Account center
+                </Link>
                 <button
                   type="button"
                   className="mt-2 block text-left hover:text-el-gold-deep"
@@ -132,7 +129,6 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
           </div>
         </div>
       </div>
-      {history ? <HistoryDialog onClose={() => setHistory(false)} /> : null}
     </header>
   )
 }

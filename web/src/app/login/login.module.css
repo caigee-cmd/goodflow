@@ -1,0 +1,37 @@
+/* Editorial image panel: very slow crossfade + drift between the login stills. */
+.slide {
+  opacity: 0;
+  animation: login-slide 27s cubic-bezier(0.45, 0, 0.55, 1) infinite both;
+  will-change: opacity, transform;
+}
+
+@keyframes login-slide {
+  0% {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  7% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+    transform: scale(1.07);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.07);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    animation: none;
+    transform: none;
+  }
+  .slide:first-child {
+    opacity: 1;
+  }
+}

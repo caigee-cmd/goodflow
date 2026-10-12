@@ -24,7 +24,6 @@ export function featuredProducts(products: Product[]) {
   return products
     .filter((item) => item.featured && item.source === "archive")
     .sort((a, b) => b.clicks - a.clicks)
-    .slice(0, 5)
 }
 
 export function fromLabel(product: Product) {

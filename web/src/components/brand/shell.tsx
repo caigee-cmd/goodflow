@@ -14,12 +14,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
   if (pathname === "/login") return <>{children}</>
 
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="flex min-h-svh flex-col">
       <Suspense fallback={<div className="h-[72px]" />}>
         <Topbar onAsk={() => setAdvisor((open) => !open)} />
       </Suspense>
       <AdvisorProvider open={() => setAdvisor(true)}>
-        <div className="flex-1 transition-[padding] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]" style={{ paddingRight: advisor ? 452 : 0 }}>
+        <div className="flex-1" style={{ paddingRight: "var(--advisor-pad, 0px)" }}>
           {children}
         </div>
       </AdvisorProvider>

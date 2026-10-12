@@ -100,7 +100,7 @@ const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 
 | 角色 | 字体 | 字号 / 行高 | 字重 | 其他 |
 |---|---|---|---|---|
-| Wordmark · 登录页 | Bodoni | 40 / 48 | 500 | uppercase，tracking .28em |
+| Wordmark · 登录页 | Bodoni | 28 / 36 | 500 | uppercase，tracking .28em |
 | Wordmark · 顶栏 | Bodoni | 18 / 24 | 500 | uppercase，tracking .28em |
 | Display（Home H1） | Bodoni | 56 / 64 | 400 | 句首大写，tracking -.01em |
 | 页面标题 | Bodoni | 40 / 48 | 400 | Categories / Ranking / RFQ List |
@@ -187,7 +187,7 @@ CSS `uppercase` 会把 é 转成 É，数据里正常写 `Estée Lauder` 即可�
 
 ### 2.3 自研组件清单
 
-`Wordmark` `Topbar` `Footer` `CaseCard` `CaseMasonry` `CaseDialog` `ProductCard` `ProductDialog` `PriceTierTable` `QuantityStepper` `SourceBadge` `FilterSidebar` `ActiveFilters` `RankingStage` `RankingList` `MetricSwitch` `TrendingMarquee` `RfqLineRow` `RfqSummary` `ExportDialog` `AdvisorPanel`（见 AI_SCRIPT.md）`PlaceholderImage` `EmptyState`
+`Wordmark` `SignInForm` `Topbar` `Footer` `CaseCard` `CaseMasonry` `CaseDialog` `ProductCard` `ProductDialog` `PriceTierTable` `QuantityStepper` `SourceBadge` `FilterSidebar` `ActiveFilters` `RankingStage` `RankingList` `MetricSwitch` `TrendingMarquee` `RfqLineRow` `RfqSummary` `ExportDialog` `AdvisorPanel`（见 AI_SCRIPT.md）`PlaceholderImage` `EmptyState`
 
 ---
 
@@ -221,22 +221,25 @@ CSS `uppercase` 会把 é 转成 É，数据里正常写 `Estée Lauder` 即可�
 
 ### 4.1 Login `/login`
 
-- **背景**：`ivory` 底，叠两层径向金光，24s 缓慢漂移（复用 Fluxa 的 `aurora` keyframes，换成下面的颜色）：
-  ```css
-  radial-gradient(60% 50% at 50% 35%, rgb(196 165 116 / 0.18), transparent 70%),
-  radial-gradient(40% 40% at 80% 90%, rgb(196 165 116 / 0.10), transparent 70%);
-  ```
-- **顶部**（居中）：
-  - Wordmark 40px
-  - 下方 16px 处一条 40×1px 的 `el-gold` 细线
-  - 再往下 16px：`GIFT INTELLIGENCE`，12px，tracking .32em，`taupe-ink`
-- **卡片**：
-  - 尺寸与表面：`max-w-md`，距顶部区块 40px；`rgb(255 253 249 / 0.72)` 底 + `backdrop-blur-xl` + 1px `line` 描边，圆角 10，`shadow-el-md`，内边距 32px
-  - 标题：`Sign in`，Bodoni 24；下面一行 `Use your Estée Lauder account`，13px `taupe-ink`
-  - 表单：Email、Password 两个输入框，h-12，左侧图标（Mail / Lock）；预填 `buyer@esteelauder.com` / `demo`
-  - 按钮：`Sign in` 主按钮全宽 h-12 → 分隔线 `or` → `Continue as guest` 文字按钮
-- **底部**：距页面底 24px，`Powered by GoodFlow · Demo environment`，11px
-- **动效**：Wordmark blur-fade 700ms；卡片延迟 150ms 入场。提交时按钮转圈 600ms → 整页 opacity 到 0（350ms）→ 跳转 `/`
+基于 shadcn `login-02` 双栏封面布局，按 Estée Lauder 调性重做。**不用**玻璃卡片、径向金光、渐变或发光。
+
+- **整体**：`min-h-screen`，`grid-cols-[minmax(560px,1fr)_minmax(0,1fr)]`，页面底 `ivory`。两栏之间一条细金色竖线（`Separator` vertical，`el-gold/40`）。登录页不显示 Topbar。
+- **左栏**（象牙底，`px-16 py-12`，纵向三区）：
+  - **顶**：Wordmark 28px 黑字 → 下方 16px 处一条 40×1px `el-gold` 细线 → 再往下 16px：产品名眉标（`brand.productName`，现为 `PRODUCT INTELLIGENCE`），11px uppercase tracking .32em，`taupe-ink`
+  - **中**（`flex-1` 垂直居中）：表单区最大宽约 380px，组件为 `SignInForm`
+    - 标题：`Sign in`，Bodoni 40 / 48；副标题 `Use your Estée Lauder account`，13px `taupe-ink`
+    - 字段：Email、Password，标签 11px uppercase tracking .16em；控件用 `InputGroup` + `InputGroupAddon`（Mail / Lock 图标，stroke 1.5，`taupe`）+ `InputGroupInput`；h-12、圆角 6、`paper` 底、`line` 描边；focus 时描边变 `el-gold` + `el-gold/30` ring
+    - 预填：`buyer@esteelauder.com` / `demo`（来自 `brand.user`）
+    - 按钮：`Sign in` 主按钮（`Button` default）全宽 h-12、黑底象牙字、uppercase tracking .16em；hover 文字变 `el-gold` → `Separator` 夹 `or` 分隔 → `Continue as guest`（`Button` ghost，h-10，hover 字变 `gold-deep`、无底色）
+    - 提交中：主按钮内显示 `Spinner`，禁用态 opacity .7
+  - **底**：`Powered by GoodFlow · Demo environment`，11px tracking .08em，`taupe-ink`
+- **右栏**（`cream` 底，`overflow-hidden`，`aria-hidden`）：三张封面图交叉淡入淡出
+  - 素材：`/demo/login/login-b2.jpg`、`login-a2.jpg`、`login-c2.jpg`（1600×2133），用 `<img>` + `object-cover`；各自 `object-position`：`38% 70%` / `55% 60%` / `60% 70%`
+  - 动效：`login.module.css` 中 `login-slide`，27s 一圈（约每张 9s），缓动 `cubic-bezier(0.45, 0, 0.55, 1)`；透明度交叉淡入淡出，同时缓慢 scale 1.02→1.07；三张 `animationDelay`：`-1.5s` / `7.5s` / `16.5s`
+  - 每张左下角大写 caption + 金色短横（8×1px）：`The Fragrance Edit` / `Silk & Light` / `Quiet Rituals`（11px tracking .32em，象牙字）
+  - 右上角：`Holiday 2026`，11px uppercase tracking .32em，象牙字 90%
+  - `prefers-reduced-motion: reduce`：关掉动画与缩放，只显示第一张 B2
+- **Demo 流程**（不变）：表单已预填；Enter 或点 `Sign in` / `Continue as guest` 均可进入；按钮 Spinner 约 600ms → 整页 `main` opacity 淡出 350ms（`cubic-bezier(0.22, 1, 0.36, 1)`）→ 跳转 `/`
 
 ### 4.2 Home `/`
 
@@ -244,7 +247,7 @@ CSS `uppercase` 会把 é 转成 É，数据里正常写 `Estée Lauder` 即可�
   - 眉标 `GIFT INTELLIGENCE`
   - H1 `Gifting, curated.`（Display 56px）
   - 副标题 `Industry cases for inspiration. Every gift we've made, one click away.`，16px `taupe-ink`
-  - 背后叠一层登录页的金光，强度降到 40%
+  - 背后叠一层极淡径向金晕（约 7% 透明度；登录页已不再共用金光）
 - **场景 chips**（居中，下距 40px）：`For You` `Lunar New Year` `Holiday Season` `VIP Gifting` `Launch Events` `Employee Gifts` `✦ Gift Advisor`
   - 前 6 个只筛左侧案例，`For You` 等于全部、featured 优先
   - 最后一个打开 AI 面板
@@ -412,7 +415,7 @@ CSS `uppercase` 会把 é 转成 É，数据里正常写 `Estée Lauder` 即可�
 ## 7. 反面清单（看到就改）
 
 - 紫色、蓝色、青色，任何渐变按钮
-- 发光、流光、聚光灯、霓虹描边
+- 发光、流光、聚光灯、霓虹描边；登录页的毛玻璃卡片、漂移径向金光（已废弃，勿回退）
 - 纯白 `#FFFFFF` 页面底、深色主题
 - 金色 `#C4A574` 直接当文字放在浅色底上
 - 12px 以下的 Bodoni

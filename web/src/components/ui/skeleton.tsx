@@ -53,9 +53,9 @@ export function AdvisorSkeleton() {
 
 export function CaseGridSkeleton({ aspects }: { aspects: string[][] }) {
   return (
-    <div className="flex gap-6" aria-hidden>
+    <div className="flex gap-4" aria-hidden>
       {aspects.map((lane, column) => (
-        <div key={column} className="flex min-w-0 flex-1 flex-col gap-6">
+        <div key={column} className="flex min-w-0 flex-1 flex-col gap-4">
           {lane.map((aspect, index) => (
             <Skeleton
               key={index}

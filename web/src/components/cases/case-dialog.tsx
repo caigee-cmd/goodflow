@@ -1,13 +1,28 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
-import { X } from "lucide-react"
+import { Heart, X } from "lucide-react"
 import { caseById } from "@/data"
 import { occasionLabel } from "@/lib/catalog"
 import { ImageStage } from "@/components/media/image-stage"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
-import { Modal } from "@/components/ui/modal"
+import { Modal, useModalClose } from "@/components/ui/modal"
+import { useSaved } from "@/stores/saved"
+
+function CloseButton() {
+  const close = useModalClose()
+  return (
+    <button
+      type="button"
+      onClick={close}
+      aria-label="Close"
+      className="absolute top-4 right-4 flex size-10 items-center justify-center rounded-full border border-el-line bg-el-paper"
+    >
+      <X className="size-4" strokeWidth={1.5} />
+    </button>
+  )
+}
 
 export function CaseDialog({
   id,
@@ -19,6 +34,8 @@ export function CaseDialog({
   onOpenProduct?: (productId: string) => void
 }) {
   const item = caseById(id)
+  const saved = useSaved((state) => state.caseIds.includes(id))
+  const toggle = useSaved((state) => state.toggle)
   const [index, setIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const occasion = occasionLabel(item.occasions[0])
@@ -31,34 +48,19 @@ export function CaseDialog({
     setIndex(next)
   }
 
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose()
-    }
-    window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
-  }, [onClose])
-
   return (
     <Modal
       label={item.title}
       onClose={onClose}
-      className="relative grid h-[86vh] w-[92vw] max-w-[1200px] grid-cols-[1fr_300px] gap-8 overflow-hidden rounded-[10px] bg-el-paper p-8 shadow-el-lg"
+      className="relative grid h-[86vh] w-[92vw] max-w-[1200px] grid-cols-[1fr_300px] gap-8 rounded-[10px] bg-el-paper p-8 shadow-el-lg"
     >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute top-4 right-4 flex size-10 items-center justify-center rounded-full border border-el-line bg-el-paper"
-        >
-          <X className="size-4" strokeWidth={1.5} />
-        </button>
+        <CloseButton />
 
         <div className="min-w-0 overflow-auto pr-2">
           <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
             {occasion} · {item.year} · {item.client}
           </p>
-          <h2 className="mt-2 font-serif text-[30px] leading-[38px] tracking-[0.04em] uppercase">{item.title}</h2>
+          <h2 className="mt-2 font-heading text-[30px] leading-[38px] tracking-[0.04em] uppercase">{item.title}</h2>
           <div className="relative mt-6 aspect-[16/10] overflow-hidden rounded-lg bg-el-cream">
             <ImageStage
               label={item.title}
@@ -66,22 +68,6 @@ export function CaseDialog({
               src={item.images[index]}
               direction={direction}
             />
-            <button
-              type="button"
-              aria-label="Previous image"
-              onClick={() => show((index + item.images.length - 1) % item.images.length)}
-              className="absolute top-1/2 left-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-el-paper/80 text-[18px] backdrop-blur"
-            >
-              ‹
-            </button>
-            <button
-              type="button"
-              aria-label="Next image"
-              onClick={() => show((index + 1) % item.images.length)}
-              className="absolute top-1/2 right-3 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full bg-el-paper/80 text-[18px] backdrop-blur"
-            >
-              ›
-            </button>
           </div>
           <div className="mt-3 flex justify-center gap-2">
             {item.images.map((image, dot) => (
@@ -132,6 +118,16 @@ export function CaseDialog({
             Browse similar items
           </Link>
         </aside>
+
+        <button
+          type="button"
+          aria-label={saved ? `Remove ${item.title} from favorites` : `Save ${item.title}`}
+          aria-pressed={saved}
+          onClick={() => toggle(item.id)}
+          className="absolute top-1/2 -right-5 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-el-line bg-el-paper shadow-el-md"
+        >
+          <Heart className={saved ? "size-4 fill-el-gold text-el-gold-deep" : "size-4 text-el-black"} strokeWidth={1.5} />
+        </button>
     </Modal>
   )
 }

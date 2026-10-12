@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { Check, Loader2, Sparkles, X } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
@@ -18,7 +18,7 @@ import {
 } from "@/components/ai-elements/chain-of-thought"
 import { Conversation, ConversationContent, ConversationScrollButton } from "@/components/ai-elements/conversation"
 import { InlineCitation, InlineCitationCard, InlineCitationCardBody } from "@/components/ai-elements/inline-citation"
-import { Message, MessageContent } from "@/components/ai-elements/message"
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message"
 import { PromptInput, PromptInputSubmit, PromptInputTextarea } from "@/components/ai-elements/prompt-input"
 import { Source, Sources, SourcesContent, SourcesTrigger } from "@/components/ai-elements/sources"
 import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion"
@@ -28,6 +28,11 @@ import { HoverCardTrigger } from "@/components/ui/hover-card"
 import { useChat, type ChatLine, type ChatStep } from "@/stores/chat"
 import { useRfq } from "@/stores/rfq"
 
+const PANEL_MIN = 380
+const PANEL_DEFAULT = 520
+const PANEL_MAX = 760
+const PANEL_INSET = 32
+
 export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter()
   const add = useRfq((state) => state.add)
@@ -35,7 +40,39 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
   const setLines = useChat((state) => state.setLines)
   const [productId, setProductId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  const [width, setWidth] = useState(PANEL_DEFAULT)
+  const [resizing, setResizing] = useState(false)
   const stop = useRef(false)
+  const drag = useRef<{ startX: number; startWidth: number } | null>(null)
+
+  useEffect(() => {
+    const root = document.documentElement
+    root.style.setProperty("--advisor-pad", open ? `${width + PANEL_INSET}px` : "0px")
+    return () => {
+      root.style.removeProperty("--advisor-pad")
+    }
+  }, [open, width])
+
+  useEffect(() => {
+    if (!resizing) return
+    function move(event: PointerEvent) {
+      const origin = drag.current
+      if (!origin) return
+      const cap = Math.min(PANEL_MAX, window.innerWidth - 48)
+      const next = origin.startWidth + (origin.startX - event.clientX)
+      setWidth(Math.min(cap, Math.max(PANEL_MIN, next)))
+    }
+    function end() {
+      drag.current = null
+      setResizing(false)
+    }
+    window.addEventListener("pointermove", move)
+    window.addEventListener("pointerup", end)
+    return () => {
+      window.removeEventListener("pointermove", move)
+      window.removeEventListener("pointerup", end)
+    }
+  }, [resizing])
 
   function patchAdvisor(patch: Partial<ChatLine>) {
     setLines((current) => {
@@ -58,20 +95,23 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
     setLines((current) => [...current, { role: "advisor", text: "", steps: steps.length ? steps : undefined }])
     for (let index = 0; index < steps.length; index += 1) {
       if (stop.current) break
-      await new Promise((resolve) => window.setTimeout(resolve, 350))
+      await new Promise((resolve) => window.setTimeout(resolve, 700))
       steps[index] = { ...steps[index], status: "complete" }
       patchAdvisor({ steps: [...steps] })
     }
-    const words = turn.reply.split(/(\s+)/)
+    await new Promise((resolve) => window.setTimeout(resolve, 400))
+    const tokens = turn.reply.split(/(\s+)/)
     let spoken = ""
-    for (let index = 0; index < words.length; index += 1) {
+    for (let index = 0; index < tokens.length; index += 1) {
       if (stop.current) {
         spoken = turn.reply
         break
       }
-      spoken = words.slice(0, index + 1).join("")
+      spoken += tokens[index]
       patchAdvisor({ text: spoken })
-      await new Promise((resolve) => window.setTimeout(resolve, 22))
+      const token = tokens[index]
+      const pause = token.includes("\n") ? 160 : token.trim() ? 42 : 0
+      if (pause) await new Promise((resolve) => window.setTimeout(resolve, pause))
     }
     patchAdvisor({
       text: spoken,
@@ -96,7 +136,10 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
       ...current,
       {
         role: "advisor",
-        text: `Added ${result.added} items to your RFQ List at MOQ quantities${result.skipped ? ` (${result.skipped} already there)` : ""} — estimated ${money(total, 0)} in total.`,
+        text: `**Added to RFQ List**
+
+- **${result.added} items** at MOQ quantities${result.skipped ? `\n- **${result.skipped}** already on the list` : ""}
+- Estimated total **${money(total, 0)}**`,
         followUps: [Q.draftEmail],
       },
     ])
@@ -111,10 +154,27 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-[80px] right-4 bottom-4 z-30 flex w-[420px] flex-col rounded-[10px] border border-el-line bg-el-canvas shadow-[0_-8px_20px_rgb(26_20_16/0.05),0_10px_24px_rgb(26_20_16/0.07)]"
+      style={{ width, x: 0 }}
+      className="fixed top-[80px] right-4 bottom-4 z-30 flex flex-col rounded-[10px] border border-el-line bg-el-canvas shadow-[0_-8px_20px_rgb(26_20_16/0.05),0_10px_24px_rgb(26_20_16/0.07)]"
     >
+      <div
+        role="separator"
+        aria-orientation="vertical"
+        aria-label="Resize advisor"
+        aria-valuemin={PANEL_MIN}
+        aria-valuemax={PANEL_MAX}
+        aria-valuenow={width}
+        onPointerDown={(event) => {
+          event.preventDefault()
+          drag.current = { startX: event.clientX, startWidth: width }
+          setResizing(true)
+        }}
+        className="absolute top-3 bottom-3 -left-1.5 z-10 w-3 cursor-ew-resize touch-none"
+      >
+        <span className="absolute top-1/2 left-1/2 h-10 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-el-line transition-colors hover:bg-el-gold" />
+      </div>
       <header className="flex h-16 items-center justify-between px-5">
-        <p className="flex items-center gap-2 font-serif text-[18px] leading-6">
+        <p className="flex items-center gap-2 font-heading text-[18px] leading-6">
           <Sparkles className="size-4 text-el-gold" strokeWidth={1.5} />
           GoodFlow
         </p>
@@ -145,8 +205,31 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
                 <p className="text-[11px] font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">GoodFlow</p>
                 {line.steps?.length ? <AdvisorSteps steps={line.steps} /> : null}
                 {line.text ? (
-                  <MessageContent className="text-[14px] leading-[22px]">
-                    <CitedText text={line.text} citations={line.citations} onOpen={setProductId} />
+                  <MessageContent className="w-full text-[14px] leading-[22px]">
+                    <MessageResponse
+                      isAnimating={busy && index === lines.length - 1}
+                      className="advisor-md space-y-3 text-[14px] leading-[22px] [&_[data-streamdown=table-wrapper]>div]:overflow-visible [&_[data-streamdown=table-wrapper]>div]:rounded-none [&_[data-streamdown=table-wrapper]>div]:border-0 [&_[data-streamdown=table-wrapper]>div]:bg-transparent [&_ol]:list-decimal [&_ol]:space-y-1 [&_ol]:pl-5 [&_p]:leading-[22px] [&_strong]:font-semibold [&_table]:w-full [&_table]:table-fixed [&_table]:divide-y-0 [&_table]:text-[12px] [&_table]:leading-5 [&_td]:border-t [&_td]:border-el-line [&_td]:px-2 [&_td]:py-2 [&_td]:align-top [&_td]:whitespace-normal [&_th]:bg-transparent [&_th]:px-2 [&_th]:py-1.5 [&_th]:text-left [&_th]:text-[11px] [&_th]:font-medium [&_th]:tracking-[0.04em] [&_th]:whitespace-normal [&_th]:text-el-taupe-ink [&_th]:uppercase [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5"
+                      components={{
+                        a: ({ children }) => <span>{children}</span>,
+                        p: ({ children }) => (
+                          <p>
+                            <CitedText text={children} citations={line.citations} onOpen={setProductId} />
+                          </p>
+                        ),
+                        li: ({ children }) => (
+                          <li>
+                            <CitedText text={children} citations={line.citations} onOpen={setProductId} />
+                          </li>
+                        ),
+                        td: ({ children }) => (
+                          <td>
+                            <CitedText text={children} citations={line.citations} onOpen={setProductId} />
+                          </td>
+                        ),
+                      }}
+                    >
+                      {line.text}
+                    </MessageResponse>
                   </MessageContent>
                 ) : null}
                 {line.citations?.length ? (
@@ -201,7 +284,7 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
                     onClick={() => router.push("/rfq?export=1")}
                     className="h-9 w-fit rounded-md bg-el-black px-4 text-[12px] font-semibold tracking-[0.1em] text-el-ivory uppercase"
                   >
-                    Review & export
+                    Review & send
                   </button>
                 ) : null}
               </Message>
@@ -277,48 +360,52 @@ function CitedText({
   citations = [],
   onOpen,
 }: {
-  text: string
+  text: ReactNode
   citations?: string[]
   onOpen: (id: string) => void
 }) {
-  const parts = text.split(/(\[\d+\])/g)
+  const nodes = Array.isArray(text) ? text : [text]
   return (
     <>
-      {parts.map((part, index) => {
-        const mark = part.match(/^\[(\d+)\]$/)
-        const id = mark ? citations[Number(mark[1]) - 1] : undefined
-        if (!id) return <span key={index}>{part}</span>
-        const item = product(id)
-        return (
-          <InlineCitation key={index}>
-            <InlineCitationCard>
-              <HoverCardTrigger
-                render={
-                  <button
-                    type="button"
-                    onClick={() => onOpen(id)}
-                    className="mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-el-cream px-1 align-super text-[10px] text-el-gold-deep"
-                  />
-                }
-              >
-                {mark?.[1]}
-              </HoverCardTrigger>
-              <InlineCitationCardBody className="w-64 rounded-lg border-el-line bg-el-paper p-3">
-                <span className="flex items-center gap-3">
-                  <span className="size-12 shrink-0 overflow-hidden rounded-md bg-el-cream">
-                    <PlaceholderImage label={item.name} src={item.images[0]} />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate text-[13px] font-medium">{item.name}</span>
-                    <span className="mt-0.5 block text-[12px] text-el-taupe-ink">
-                      {item.source === "archive" ? campaignShort(item) : `By ${item.maker}`}
+      {nodes.map((node, nodeIndex) => {
+        if (typeof node !== "string") return <span key={nodeIndex}>{node}</span>
+        const parts = node.split(/(\[\d+\])/g)
+        return parts.map((part, index) => {
+          const mark = part.match(/^\[(\d+)\]$/)
+          const id = mark ? citations[Number(mark[1]) - 1] : undefined
+          if (!id) return <span key={`${nodeIndex}-${index}`}>{part}</span>
+          const item = product(id)
+          return (
+            <InlineCitation key={`${nodeIndex}-${index}`}>
+              <InlineCitationCard>
+                <HoverCardTrigger
+                  render={
+                    <button
+                      type="button"
+                      onClick={() => onOpen(id)}
+                      className="mx-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded bg-el-cream px-1 align-super text-[10px] text-el-gold-deep"
+                    />
+                  }
+                >
+                  {mark?.[1]}
+                </HoverCardTrigger>
+                <InlineCitationCardBody className="w-64 rounded-lg border-el-line bg-el-paper p-3">
+                  <span className="flex items-center gap-3">
+                    <span className="size-12 shrink-0 overflow-hidden rounded-md bg-el-cream">
+                      <PlaceholderImage label={item.name} src={item.images[0]} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-[13px] font-medium">{item.name}</span>
+                      <span className="mt-0.5 block text-[12px] text-el-taupe-ink">
+                        {item.source === "archive" ? campaignShort(item) : `By ${item.maker}`}
+                      </span>
                     </span>
                   </span>
-                </span>
-              </InlineCitationCardBody>
-            </InlineCitationCard>
-          </InlineCitation>
-        )
+                </InlineCitationCardBody>
+              </InlineCitationCard>
+            </InlineCitation>
+          )
+        })
       })}
     </>
   )

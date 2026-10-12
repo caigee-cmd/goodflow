@@ -74,7 +74,7 @@ export function CategoryBrowser({ query }: { query: string }) {
     <>
       <header className="flex flex-wrap items-end justify-between gap-6">
         <div>
-          <h1 className="font-serif text-[40px] leading-[48px] font-normal">
+          <h1 className="font-heading text-[40px] leading-[48px] font-normal">
             {filters.source === "archive" ? "Archive" : "Products"}
           </h1>
           <p className="mt-3 max-w-xl text-[14px] leading-[22px] text-el-taupe-ink">
@@ -194,7 +194,7 @@ export function CategoryBrowser({ query }: { query: string }) {
             <ProductGridSkeleton />
           ) : visible.length === 0 ? (
             <div className="py-16 text-center">
-              <h2 className="font-serif text-[24px] leading-8">No items match these filters</h2>
+              <h2 className="font-heading text-[24px] leading-8">No items match these filters</h2>
               <p className="mt-2 text-[14px] text-el-taupe-ink">Try a wider brand, source, or price.</p>
             </div>
           ) : (

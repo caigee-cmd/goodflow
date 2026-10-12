@@ -13,14 +13,11 @@ export default function HomePage() {
               "radial-gradient(50% 80% at 50% 30%, rgb(196 165 116 / 0.07), transparent 70%)",
           }}
         />
-        <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
-          Product Intelligence
-        </p>
-        <h1 className="mt-3 font-serif text-[56px] leading-[64px] font-normal tracking-[-0.01em]">
-          Discover. Decide. Keep.
+        <h1 className="font-heading text-[44px] leading-[52px] font-medium tracking-[0.04em] uppercase">
+          Discover better merch
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-[16px] leading-6 text-el-taupe-ink">
-          Find the direction in cases and trends. Decide from products this account has made before. Keep the choice for the next brief.
+        <p className="mt-3 font-heading text-[22px] leading-7 font-normal tracking-[0.08em] text-el-taupe-ink uppercase">
+          Discover, imagine, and order with ease
         </p>
         <HomeSearch />
       </header>

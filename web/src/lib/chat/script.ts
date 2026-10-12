@@ -10,8 +10,13 @@ export const GREETING =
 
 export const HOME_SUGGESTIONS = [Q.archiveLny, Q.lny2027, Q.trending]
 
-export const FALLBACK =
-  "I'm running in demo mode, so right now I'm focused on three things: your gifting archive, budget-fit options and industry rankings. Try one of these:"
+export const FALLBACK = `I'm in demo mode, so I stay on three things:
+
+- **Gifting archive** — what this account already sent
+- **Budget fit** — options under a unit price and deadline
+- **Industry rankings** — what's moving in search heat and volume
+
+Try one of these:`
 
 export const BASKET = ["arc-001", "arc-003", "ext-002", "ext-005"] as const
 
@@ -35,8 +40,17 @@ export function routeAdvisor(text: string): AdvisorTurn {
     return {
       id: "A1",
       steps: ["Searching Estée Lauder Archive", "Filtering: APAC · Lunar New Year 2026", "Ranking by case clicks · Top 3"],
-      reply:
-        "For Lunar New Year 2026 (Year of the Horse), APAC gifting was built around three pieces: the Year of the Horse Lacquer Trunk for top-tier VIPs in Greater China [1], the Gilded Horse Compact Mirror sent with La Mer renewal kits [2], and the Silk Red Envelope Set used across APAC counters [3]. Lead times were 45–70 days, with MOQs starting at 3,000.",
+      reply: `**Lunar New Year 2026 · Year of the Horse**
+
+APAC gifting was built around three pieces.
+
+| Piece | Who it was for | Lead time | MOQ |
+| --- | --- | --- | --- |
+| Year of the Horse Lacquer Trunk [1] | Top-tier VIPs, Greater China | 70 days | 3,000 |
+| Gilded Horse Compact Mirror [2] | La Mer renewal kits | 60 days | 3,000 |
+| Silk Red Envelope Set [3] | APAC counters | 45 days | 5,000 |
+
+Lead times ran **45–70 days**, and MOQs started at **3,000**.`,
       citations: ["arc-001", "arc-002", "arc-003"],
       cards: ["arc-001", "arc-002", "arc-003"],
       followUps: [Q.lny2027],
@@ -50,8 +64,18 @@ export function routeAdvisor(text: string): AdvisorTurn {
         "Searching Estée Lauder Archive + External Picks",
         "Checking lead times against Jan 15, 2027 · 10 fit · top 4",
       ],
-      reply:
-        "2027 is the Year of the Goat. These four fit under $60 and can land by Jan 15, 2027: Lacquer Trunk at $38.00 (70 days), Silk Red Envelope Set at $9.50 (45 days), Cloud-Wool Throw Blanket at $42.00 (60 days), and the Year of the Goat Porcelain Tea Set at $56.00 (75 days). Order by Nov 1, 2026.",
+      reply: `**Lunar New Year 2027 · Year of the Goat**
+
+These four stay **under $60** and can land by **Jan 15, 2027**.
+
+| Piece | Unit price | Lead time |
+| --- | --- | --- |
+| Lacquer Trunk | $38.00 | 70 days |
+| Silk Red Envelope Set | $9.50 | 45 days |
+| Cloud-Wool Throw Blanket | $42.00 | 60 days |
+| Year of the Goat Porcelain Tea Set | $56.00 | 75 days |
+
+Order by **Nov 1, 2026**.`,
       cards: [...BASKET],
       addAll: true,
       followUps: [Q.trending],
@@ -61,8 +85,17 @@ export function routeAdvisor(text: string): AdvisorTurn {
     return {
       id: "C1",
       steps: ["Reading GoodFlow public data · Jul–Sep 2026", "Ranking 10 drinkware items by search heat · Top 3"],
-      reply:
-        "Glass Straw Cup 500ml leads search heat with 18,420 searches, up 3 places. Smart Temperature Bottle is second. Double-Wall Ceramic Tumbler is third in search heat and first in case clicks. By purchase volume, Insulated Travel Cup 350ml still leads with 212,000 units.",
+      reply: `**Drinkware · Jul–Sep 2026**
+
+**Search heat**
+
+1. **Glass Straw Cup 500ml** — 18,420 searches, up 3 places
+2. **Smart Temperature Bottle**
+3. **Double-Wall Ceramic Tumbler** — also first in case clicks
+
+**Purchase volume**
+
+- **Insulated Travel Cup 350ml** still leads, at **212,000 units**`,
       cards: ["ext-007", "ext-010", "ext-008"],
     }
   }
@@ -70,7 +103,14 @@ export function routeAdvisor(text: string): AdvisorTurn {
     return {
       id: "B3",
       steps: ["Reading RFQ List", "Applying volume-tier pricing", "Drafting email"],
-      reply: "The draft is ready. Review the quantities, then export the email.",
+      reply: `**RFQ email**
+
+The request is ready.
+
+- Quantities are at **MOQ**
+- Pricing uses the **volume tier** for each line
+
+Review it, then send.`,
       exportRfq: true,
     }
   }
@@ -78,8 +118,11 @@ export function routeAdvisor(text: string): AdvisorTurn {
     return {
       id: "HELLO",
       steps: [],
-      reply:
-        "I can look up products already made for this account, match a budget and deadline, or show what's trending.",
+      reply: `I can help with three things:
+
+- **Archive** — products already made for this account
+- **Brief** — a budget and a deadline
+- **Rankings** — what's trending this season`,
       followUps: HOME_SUGGESTIONS,
     }
   }

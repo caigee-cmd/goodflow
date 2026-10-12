@@ -74,6 +74,7 @@ export const PRODUCTS: Product[] = [
     images: img("arc-003", 3),
     priceTiers: tiers([5000, 9.5, 45], [20000, 8.2, 55], [50000, 7.1, 70]),
     clicks: 2610,
+    featured: true,
   },
   {
     id: "arc-004",
@@ -133,6 +134,7 @@ export const PRODUCTS: Product[] = [
     images: img("arc-006"),
     priceTiers: tiers([1000, 14, 40], [5000, 11.5, 50], [20000, 9.8, 60]),
     clicks: 1270,
+    featured: true,
   },
   {
     id: "arc-007",
@@ -152,6 +154,7 @@ export const PRODUCTS: Product[] = [
     images: img("arc-007"),
     priceTiers: tiers([10000, 3.2, 45], [30000, 2.7, 55], [100000, 2.2, 70]),
     clicks: 1130,
+    featured: true,
   },
   {
     id: "arc-008",
@@ -208,6 +211,7 @@ export const PRODUCTS: Product[] = [
     images: img("arc-010", 2),
     priceTiers: tiers([2000, 21, 60], [5000, 18.2, 70], [20000, 15.6, 85]),
     clicks: 1560,
+    featured: true,
   },
   {
     id: "arc-011",

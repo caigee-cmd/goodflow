@@ -4,6 +4,9 @@ import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { brand } from "@/config/brand"
 import { product } from "@/data"
+import type { RfqHistoryItem } from "@/data/estee-lauder/rfq-history"
+import { fmtDate } from "@/lib/dates"
+import { tierFor } from "@/lib/pricing"
 import type { Region, RfqLine, ShippingTerms } from "@/lib/types"
 
 type RfqState = {
@@ -12,11 +15,13 @@ type RfqState = {
   neededBy: string
   region: Region
   notes: string
+  history: RfqHistoryItem[]
   hydrated: boolean
   add: (ids: string[], opts?: { project?: string; notes?: string }) => { added: number; skipped: number }
   update: (id: string, patch: Partial<Pick<RfqLine, "qty" | "terms" | "selected">>) => void
   remove: (id: string) => void
   setMeta: (patch: Partial<Pick<RfqState, "project" | "neededBy" | "region" | "notes">>) => void
+  submit: () => { ok: boolean; id?: string }
   reset: () => void
   setHydrated: () => void
 }
@@ -27,11 +32,12 @@ const empty = {
   neededBy: brand.rfq.defaultNeededBy,
   region: brand.rfq.defaultRegion,
   notes: "",
+  history: [] as RfqHistoryItem[],
 }
 
 export const useRfq = create<RfqState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...empty,
       hydrated: false,
       add: (ids, opts) => {
@@ -67,6 +73,44 @@ export const useRfq = create<RfqState>()(
         })),
       remove: (id) => set((state) => ({ lines: state.lines.filter((line) => line.productId !== id) })),
       setMeta: (patch) => set(patch),
+      submit: () => {
+        const state = get()
+        const selected = state.lines.filter((line) => line.selected)
+        if (selected.length === 0) return { ok: false }
+        const id = `rfq-${Date.now().toString(36)}`
+        const item: RfqHistoryItem = {
+          id,
+          project: state.project.trim() || "Gift sourcing",
+          sentOn: fmtDate(brand.demoToday),
+          neededBy: fmtDate(state.neededBy),
+          region: state.region,
+          status: "Sent",
+          lines: selected.map((line) => {
+            const current = product(line.productId)
+            const tier = tierFor(current, line.qty)
+            return {
+              name: current.name,
+              qty: line.qty,
+              unitPrice: tier.unitPrice,
+              terms: line.terms,
+            }
+          }),
+        }
+        const remaining = state.lines.filter((line) => !line.selected)
+        set({
+          history: [item, ...state.history],
+          lines: remaining,
+          ...(remaining.length === 0
+            ? {
+                project: "",
+                notes: "",
+                neededBy: brand.rfq.defaultNeededBy,
+                region: brand.rfq.defaultRegion,
+              }
+            : {}),
+        })
+        return { ok: true, id }
+      },
       reset: () => set(empty),
       setHydrated: () => set({ hydrated: true }),
     }),
@@ -79,6 +123,7 @@ export const useRfq = create<RfqState>()(
         neededBy: state.neededBy,
         region: state.region,
         notes: state.notes,
+        history: state.history,
       }),
     },
   ),

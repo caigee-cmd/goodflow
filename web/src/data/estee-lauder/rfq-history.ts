@@ -1,4 +1,4 @@
-export type RfqHistoryStatus = "Quoted" | "In review" | "Closed"
+export type RfqHistoryStatus = "Sent" | "Quoted" | "In review" | "Closed"
 
 export type RfqHistoryLine = {
   name: string

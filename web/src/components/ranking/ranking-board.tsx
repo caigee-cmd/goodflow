@@ -66,7 +66,7 @@ export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?:
           <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
             GoodFlow public data · {DRINKWARE.period}
           </p>
-          <h1 className="mt-2 font-serif text-[40px] leading-[48px] font-normal">Ranking</h1>
+          <h1 className="mt-2 font-heading text-[40px] leading-[48px] font-normal">Ranking</h1>
           <p className="mt-2 text-[16px] leading-6 text-el-taupe-ink">{DRINKWARE.label} · This season</p>
         </div>
         <div className="flex h-10 rounded-md border border-el-line bg-el-paper p-0.5" role="tablist" aria-label="Metric">
@@ -159,7 +159,7 @@ export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?:
                   </div>
                   <p
                     className={cn(
-                      "mt-3 font-serif leading-none",
+                      "mt-3 font-heading leading-none",
                       large ? "text-[56px]" : "text-[28px]",
                       rank === 1 ? "text-el-gold-deep" : "text-el-black",
                     )}

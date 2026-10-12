@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { X } from "lucide-react"
+import { Heart, X } from "lucide-react"
 import { brand } from "@/config/brand"
 import { BRANDS, product } from "@/data"
 import { fmtDate, money, orderBy } from "@/lib/dates"
@@ -10,9 +10,24 @@ import type { ShippingTerms } from "@/lib/types"
 import { demoImage } from "@/lib/demo-images"
 import { ImageStage } from "@/components/media/image-stage"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
-import { Modal } from "@/components/ui/modal"
+import { Modal, useModalClose } from "@/components/ui/modal"
 import { useOpenAdvisor } from "@/components/brand/advisor-context"
 import { useRfq } from "@/stores/rfq"
+import { useSaved } from "@/stores/saved"
+
+function CloseButton() {
+  const close = useModalClose()
+  return (
+    <button
+      type="button"
+      aria-label="Close"
+      onClick={close}
+      className="absolute top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full border border-el-line bg-el-paper"
+    >
+      <X className="size-4" strokeWidth={1.5} />
+    </button>
+  )
+}
 
 const TERMS: ShippingTerms[] = ["EXW", "FOB", "DAP"]
 
@@ -23,6 +38,8 @@ export function ProductDialog({ id, onClose }: { id: string; onClose: () => void
   const [view, setView] = useState(0)
   const [direction, setDirection] = useState(1)
   const onAsk = useOpenAdvisor()
+  const saved = useSaved((state) => state.productIds.includes(id))
+  const toggleSaved = useSaved((state) => state.toggleProduct)
   const lines = useRfq((state) => state.lines)
   const add = useRfq((state) => state.add)
   const inList = lines.some((line) => line.productId === id)
@@ -39,23 +56,25 @@ export function ProductDialog({ id, onClose }: { id: string; onClose: () => void
     <Modal
       label={item.name}
       onClose={onClose}
-      className="relative grid h-[86vh] w-[92vw] max-w-[1120px] grid-cols-[1.1fr_1fr] overflow-hidden rounded-[10px] bg-el-paper shadow-el-lg"
+      className="relative grid h-[86vh] w-[92vw] max-w-[1120px] grid-cols-[1.1fr_1fr] rounded-[10px] bg-el-paper shadow-el-lg"
     >
-        <button
-          type="button"
-          aria-label="Close"
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 flex size-10 items-center justify-center rounded-full border border-el-line bg-el-paper"
-        >
-          <X className="size-4" strokeWidth={1.5} />
-        </button>
+        <CloseButton />
 
-        <div className="flex flex-col bg-el-cream p-8">
+        <div className="flex flex-col overflow-hidden rounded-l-[10px] bg-el-cream p-8">
           <div className="flex flex-1 items-center justify-center">
             <div className="relative aspect-square w-full max-w-[460px] overflow-hidden">
               <ImageStage label={item.name} src={item.images[view]} direction={direction} />
             </div>
           </div>
+          <button
+            type="button"
+            aria-label={saved ? `Remove ${item.name} from favorites` : `Save ${item.name}`}
+            aria-pressed={saved}
+            onClick={() => toggleSaved(item.id)}
+            className="absolute top-1/2 -right-5 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-el-line bg-el-paper shadow-el-md"
+          >
+            <Heart className={saved ? "size-4 fill-el-gold text-el-gold-deep" : "size-4 text-el-black"} strokeWidth={1.5} />
+          </button>
           {item.images.length > 1 && demoImage(item.images[0]) ? (
             <div className="mt-6 flex justify-center gap-3">
               {item.images.map((image, index) => (
@@ -80,7 +99,7 @@ export function ProductDialog({ id, onClose }: { id: string; onClose: () => void
           ) : null}
         </div>
 
-        <div className="flex min-h-0 flex-col p-8">
+        <div className="flex min-h-0 flex-col overflow-hidden rounded-r-[10px] p-8">
           <div className="min-h-0 flex-1 overflow-auto pr-8">
             <div className="flex items-center gap-2">
               <span
@@ -96,7 +115,7 @@ export function ProductDialog({ id, onClose }: { id: string; onClose: () => void
                 {brandNames.join(" · ")}
               </p>
             </div>
-            <h2 className="mt-3 font-serif text-[30px] leading-[38px]">{item.name}</h2>
+            <h2 className="mt-3 font-heading text-[30px] leading-[38px]">{item.name}</h2>
 
             {item.source === "archive" ? (
               <>

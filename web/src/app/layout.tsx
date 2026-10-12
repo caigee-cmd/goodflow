@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Bodoni_Moda, Geist_Mono, Outfit } from "next/font/google"
+import { Bodoni_Moda, Geist_Mono, Outfit, Oswald } from "next/font/google"
 import { brand } from "@/config/brand"
 import { Shell } from "@/components/brand/shell"
 import { StoreHydrator } from "@/components/brand/store-hydrator"
@@ -19,6 +19,11 @@ const outfit = Outfit({
   variable: "--font-outfit",
 })
 
+const oswald = Oswald({
+  subsets: ["latin"],
+  variable: "--font-oswald",
+})
+
 const geistMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-geist-mono",
@@ -31,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${bodoni.variable} ${outfit.variable} ${geistMono.variable} h-full antialiased`}>
+    <html lang="en" className={`${bodoni.variable} ${outfit.variable} ${oswald.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full bg-el-canvas text-el-black">
         <TooltipProvider>
           <Suspense fallback={null}>

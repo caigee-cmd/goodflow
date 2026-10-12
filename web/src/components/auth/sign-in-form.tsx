@@ -2,8 +2,16 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Loader2, Lock, Mail } from "lucide-react"
+import { Lock, Mail } from "lucide-react"
 import { brand } from "@/config/brand"
+import { Button } from "@/components/ui/button"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
+import { Separator } from "@/components/ui/separator"
+import { Spinner } from "@/components/ui/spinner"
+
+const labelClass = "block text-[11px] font-semibold tracking-[0.16em] text-el-taupe-ink uppercase"
+const groupClass =
+  "mt-2 h-12 rounded-full border-el-line bg-el-paper shadow-none has-[[data-slot=input-group-control]:focus-visible]:border-el-gold has-[[data-slot=input-group-control]:focus-visible]:ring-el-gold/30"
 
 export function SignInForm() {
   const router = useRouter()
@@ -22,64 +30,73 @@ export function SignInForm() {
 
   return (
     <form
-      className="relative mt-10 w-full max-w-md rounded-[10px] border border-el-line bg-[rgb(255_253_249/0.72)] p-8 shadow-el-md backdrop-blur-xl"
+      className="flex flex-col"
       onSubmit={(event) => {
         event.preventDefault()
         enter()
       }}
     >
-      <h1 className="font-serif text-[24px] leading-8 font-normal">Sign in</h1>
-      <p className="mt-1 text-[13px] leading-5 text-el-taupe-ink">Use your Estée Lauder account</p>
+      <h1 className="font-heading text-[40px] leading-[48px] font-medium tracking-[0.04em] text-el-black uppercase">
+        Sign in
+      </h1>
+      <p className="mt-3 font-heading text-[16px] leading-6 font-normal tracking-[0.08em] text-el-taupe-ink uppercase">
+        Use your Estée Lauder account
+      </p>
 
-      <label className="mt-6 block text-[12px] font-medium tracking-[0.08em] text-el-taupe-ink uppercase">
+      <label className={`${labelClass} mt-10`}>
         Email
-        <span className="relative mt-2 block">
-          <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-el-taupe" strokeWidth={1.5} />
-          <input
+        <InputGroup className={groupClass}>
+          <InputGroupAddon>
+            <Mail className="text-el-taupe" strokeWidth={1.5} />
+          </InputGroupAddon>
+          <InputGroupInput
             name="email"
             type="email"
             autoComplete="username"
             defaultValue={brand.user.email}
-            className="h-12 w-full rounded-md border border-el-line bg-el-paper pr-3 pl-10 text-[14px] text-el-black outline-none focus:border-el-gold focus:ring-2 focus:ring-el-gold/40"
+            className="text-[14px] tracking-normal text-el-black normal-case"
           />
-        </span>
+        </InputGroup>
       </label>
 
-      <label className="mt-4 block text-[12px] font-medium tracking-[0.08em] text-el-taupe-ink uppercase">
+      <label className={`${labelClass} mt-5`}>
         Password
-        <span className="relative mt-2 block">
-          <Lock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-el-taupe" strokeWidth={1.5} />
-          <input
+        <InputGroup className={groupClass}>
+          <InputGroupAddon>
+            <Lock className="text-el-taupe" strokeWidth={1.5} />
+          </InputGroupAddon>
+          <InputGroupInput
             name="password"
             type="password"
             autoComplete="current-password"
             defaultValue={brand.user.password}
-            className="h-12 w-full rounded-md border border-el-line bg-el-paper pr-3 pl-10 text-[14px] text-el-black outline-none focus:border-el-gold focus:ring-2 focus:ring-el-gold/40"
+            className="text-[14px] tracking-normal text-el-black normal-case"
           />
-        </span>
+        </InputGroup>
       </label>
 
-      <button
+      <Button
         type="submit"
         disabled={pending}
-        className="mt-6 flex h-12 w-full items-center justify-center rounded-md bg-el-black text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase transition-colors hover:text-el-gold disabled:opacity-70"
+        className="mt-8 h-12 w-full rounded-full bg-el-black text-[12px] font-semibold tracking-[0.1em] text-el-ivory uppercase transition-colors duration-500 hover:bg-el-black hover:text-el-gold disabled:opacity-70"
       >
-        {pending ? <Loader2 className="size-4 animate-spin" /> : "Sign in"}
-      </button>
+        {pending ? <Spinner /> : "Sign in"}
+      </Button>
 
-      <div className="my-5 flex items-center gap-3 text-[11px] tracking-[0.16em] text-el-taupe-ink uppercase">
-        <span className="h-px flex-1 bg-el-line" />
+      <div className="my-6 flex items-center gap-4 text-[11px] font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
+        <Separator className="flex-1 bg-el-line" />
         or
-        <span className="h-px flex-1 bg-el-line" />
+        <Separator className="flex-1 bg-el-line" />
       </div>
 
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={enter}
-        className="w-full text-[12px] font-semibold tracking-[0.12em] text-el-black uppercase hover:text-el-gold-deep"
+        className="h-10 w-full rounded-full text-[12px] font-semibold tracking-[0.1em] text-el-black uppercase hover:bg-transparent hover:text-el-gold-deep"
       >
         Continue as guest
-      </button>
+      </Button>
     </form>
   )
 }
