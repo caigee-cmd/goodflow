@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Heart } from "lucide-react"
 import { CASES, PRODUCTS } from "@/data"
 import { RFQ_HISTORY, rfqHistoryTotal, type RfqHistoryItem } from "@/data/estee-lauder/rfq-history"
@@ -13,6 +13,7 @@ import { CaseDialog } from "@/components/cases/case-dialog"
 import { ProductDialog } from "@/components/products/product-dialog"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { AccountCenterSkeleton } from "@/components/ui/skeleton"
 
 type Tab = "favorites" | "history"
 
@@ -20,6 +21,22 @@ export function AccountCenter() {
   const [tab, setTab] = useState<Tab>("favorites")
   const [caseId, setCaseId] = useState<string | null>(null)
   const [productId, setProductId] = useState<string | null>(null)
+  const [ready, setReady] = useState(false)
+  const [paneReady, setPaneReady] = useState(true)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setReady(true), 700)
+    return () => window.clearTimeout(timer)
+  }, [])
+
+  function openTab(next: Tab) {
+    if (next === tab) return
+    setTab(next)
+    setPaneReady(false)
+    window.setTimeout(() => setPaneReady(true), 650)
+  }
+
+  if (!ready) return <AccountCenterSkeleton />
 
   return (
     <>
@@ -41,21 +58,42 @@ export function AccountCenter() {
             <p className="mt-3 text-[13px] leading-5 text-el-taupe-ink">{brand.user.title}</p>
           </div>
           <nav className="mt-8 flex flex-col gap-0.5">
-            <TabButton active={tab === "favorites"} onClick={() => setTab("favorites")}>
+            <TabButton active={tab === "favorites"} onClick={() => openTab("favorites")}>
               Favorites
             </TabButton>
-            <TabButton active={tab === "history"} onClick={() => setTab("history")}>
+            <TabButton active={tab === "history"} onClick={() => openTab("history")}>
               History RFQ
             </TabButton>
           </nav>
         </aside>
         <div className="min-w-0">
-          {tab === "favorites" ? <FavoritesPane onOpenCase={setCaseId} onOpenProduct={setProductId} /> : <HistoryPane />}
+          {paneReady ? (
+            tab === "favorites" ? <FavoritesPane onOpenCase={setCaseId} onOpenProduct={setProductId} /> : <HistoryPane />
+          ) : (
+            <PaneSkeleton />
+          )}
         </div>
       </div>
       {caseId ? <CaseDialog id={caseId} onClose={() => setCaseId(null)} /> : null}
       {productId ? <ProductDialog id={productId} onClose={() => setProductId(null)} /> : null}
     </>
+  )
+}
+
+function PaneSkeleton() {
+  return (
+    <div aria-hidden>
+      <div className="h-3 w-20 rounded-md bg-el-cream el-shimmer" />
+      <div className="mt-3 h-8 w-48 rounded-md bg-el-cream el-shimmer" />
+      <div className="mt-8 grid grid-cols-[240px_minmax(0,1fr)] gap-8">
+        <div className="space-y-3">
+          {[0, 1, 2].map((row) => (
+            <div key={row} className="h-12 rounded-md bg-el-cream el-shimmer" style={{ animationDelay: `${row * 80}ms` }} />
+          ))}
+        </div>
+        <div className="h-72 rounded-[10px] bg-el-cream el-shimmer" />
+      </div>
+    </div>
   )
 }
 
@@ -186,21 +224,21 @@ function HistoryPane() {
   }
 
   return (
-    <div className="grid grid-cols-[240px_minmax(0,1fr)] gap-8">
-      <div>
+    <div className="grid grid-cols-[240px_minmax(0,1fr)] items-start">
+      <div className="pr-6">
         <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">History RFQ</p>
-        <ul className="mt-4 flex flex-col gap-2">
+        <ul className="mt-4 flex flex-col">
           {items.map((item) => {
             const selected = item.id === current.id
             return (
-              <li key={item.id}>
+              <li key={item.id} className="border-b border-el-line/70 last:border-b-0">
                 <button
                   type="button"
                   onClick={() => setId(item.id)}
                   className={
                     selected
-                      ? "w-full rounded-md bg-el-paper px-3 py-3 text-left shadow-el-sm"
-                      : "w-full rounded-md px-3 py-3 text-left hover:bg-el-paper"
+                      ? "w-full border-l-2 border-el-gold bg-el-cream/70 py-3 pr-3 pl-[10px] text-left"
+                      : "w-full border-l-2 border-transparent py-3 pr-3 pl-[10px] text-left hover:bg-el-cream/40"
                   }
                 >
                   <span className="block text-[13px] leading-5">{item.project}</span>
@@ -211,7 +249,9 @@ function HistoryPane() {
           })}
         </ul>
       </div>
-      <HistoryDetail item={current} />
+      <div className="border-l border-el-line pl-8">
+        <HistoryDetail item={current} />
+      </div>
     </div>
   )
 }

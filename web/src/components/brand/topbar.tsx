@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 import { useChat } from "@/stores/chat"
 import { useRfq } from "@/stores/rfq"
 import { Avatar, AvatarBadge, AvatarFallback } from "@/components/ui/avatar"
+import { AccountMenuSkeleton } from "@/components/ui/skeleton"
 import { Wordmark } from "./wordmark"
 
 const NAV = [
@@ -30,6 +31,7 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
   const reset = useRfq((state) => state.reset)
   const resetChat = useChat((state) => state.reset)
   const [menu, setMenu] = useState(false)
+  const [menuReady, setMenuReady] = useState(false)
 
   return (
     <header className="sticky top-0 z-40 h-[72px] border-b border-el-line bg-el-canvas">
@@ -92,7 +94,16 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
               type="button"
               aria-label={brand.user.name}
               aria-expanded={menu}
-              onClick={() => setMenu((open) => !open)}
+              onClick={() => {
+                setMenu((open) => {
+                  const next = !open
+                  if (next) {
+                    setMenuReady(false)
+                    window.setTimeout(() => setMenuReady(true), 550)
+                  }
+                  return next
+                })
+              }}
               className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-el-gold focus-visible:ring-offset-2 focus-visible:ring-offset-el-canvas"
             >
               <Avatar size="lg" className="size-9 shadow-el-sm">
@@ -102,7 +113,8 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
                 <AvatarBadge className="bg-el-gold ring-el-canvas" />
               </Avatar>
             </button>
-            {menu ? (
+            {menu && !menuReady ? <AccountMenuSkeleton /> : null}
+            {menu && menuReady ? (
               <div className="absolute top-11 right-0 w-64 rounded-lg border border-el-line bg-el-paper p-3 text-[13px] shadow-el-md">
                 <p className="font-medium">{brand.user.name}</p>
                 <p className="mt-1 text-[12px] text-el-taupe-ink">{brand.user.email}</p>

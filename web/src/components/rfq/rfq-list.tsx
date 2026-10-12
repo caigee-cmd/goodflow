@@ -142,6 +142,12 @@ export function RfqList() {
   const submit = useRfq((state) => state.submit)
   const [preview, setPreview] = useState(false)
   const [sent, setSent] = useState<{ id: string; count: number } | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 750)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("export") !== "1") return
@@ -161,7 +167,7 @@ export function RfqList() {
     return [...leads].sort((a, b) => b.days - a.days)[0]
   }, [selected])
 
-  if (!hydrated) return <RfqListSkeleton />
+  if (!hydrated || loading) return <RfqListSkeleton />
   if (lines.length === 0) {
     return (
       <div className="py-20 text-center">

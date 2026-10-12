@@ -10,6 +10,56 @@ function Skeleton({ className, ...props }: React.ComponentProps<"div">) {
   )
 }
 
+export function AccountMenuSkeleton() {
+  return (
+    <div className="absolute top-11 right-0 w-64 rounded-lg border border-el-line bg-el-paper p-3 shadow-el-md" aria-hidden>
+      <Skeleton className="h-4 w-24" />
+      <Skeleton className="mt-2 h-3 w-40" />
+      <Skeleton className="mt-4 h-3 w-28" />
+      <Skeleton className="mt-3 h-3 w-20" />
+      <Skeleton className="mt-3 h-3 w-16" />
+    </div>
+  )
+}
+
+export function AccountCenterSkeleton() {
+  return (
+    <div className="grid w-full grid-cols-[280px_minmax(0,1fr)] items-start gap-6" aria-hidden>
+      <div className="h-[min(640px,calc(100svh-13rem))] rounded-2xl bg-el-cream px-5 py-6">
+        <Skeleton className="h-3 w-24 bg-el-paper" />
+        <div className="mt-5 flex items-center gap-3">
+          <Skeleton className="size-12 rounded-full bg-el-paper" />
+          <div className="flex-1 space-y-2">
+            <Skeleton className="h-5 w-28 bg-el-paper" />
+            <Skeleton className="h-3 w-36 bg-el-paper" />
+          </div>
+        </div>
+        <Skeleton className="mt-4 h-3 w-32 bg-el-paper" />
+        <div className="mt-8 space-y-2">
+          <Skeleton className="h-9 w-full bg-el-paper" />
+          <Skeleton className="h-9 w-full bg-el-paper/70" />
+        </div>
+      </div>
+      <div>
+        <Skeleton className="h-3 w-20" />
+        <Skeleton className="mt-3 h-8 w-40" />
+        <div className="mt-8 grid grid-cols-2 gap-4">
+          {[0, 1, 2, 3].map((row) => (
+            <div key={row} className="flex gap-3 rounded-lg bg-el-paper p-3">
+              <Skeleton className="size-24" style={{ animationDelay: `${row * 80}ms` }} />
+              <div className="flex-1 space-y-2 py-1">
+                <Skeleton className="h-4 w-4/5" />
+                <Skeleton className="h-3 w-1/2" />
+                <Skeleton className="mt-3 h-3 w-16" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function RfqListSkeleton() {
   return (
     <div className="grid grid-cols-[1fr_360px] gap-10" aria-hidden>
