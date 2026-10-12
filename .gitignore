@@ -1,0 +1,25 @@
+# dependencies and build output
+web/node_modules
+web/.next
+web/out
+web/build
+web/coverage
+
+# vercel link (local)
+web/.vercel
+
+# typescript
+web/*.tsbuildinfo
+web/next-env.d.ts
+
+# env and secrets
+.env
+.env.*
+*.pem
+
+# local tooling
+.gfchunks
+.DS_Store
+
+# source review packet, not part of the app
+*.zip
