@@ -9,17 +9,27 @@ export function PlaceholderImage({
   seed = label,
   src,
   className,
+  priority = false,
 }: {
   label: string
   seed?: string
   src?: string
   className?: string
+  priority?: boolean
 }) {
   const real = demoImage(src)
   if (real) {
     return (
       <div className={cn("relative h-full w-full overflow-hidden bg-el-cream", className)}>
-        <Image src={real} alt={label} fill sizes="(max-width: 768px) 100vw, 480px" className="object-cover" />
+        <Image
+          src={real}
+          alt={label}
+          fill
+          preload={priority}
+          loading={priority ? "eager" : "lazy"}
+          sizes="(max-width: 768px) 100vw, 480px"
+          className="object-cover"
+        />
       </div>
     )
   }

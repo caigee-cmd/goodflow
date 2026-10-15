@@ -31,7 +31,7 @@ export function ImageStage({
         transition={{ duration: 0.48, ease: EASE }}
         className="absolute inset-0"
       >
-        <PlaceholderImage label={label} seed={seed} src={src} className={className} />
+        <PlaceholderImage label={label} seed={seed} src={src} priority className={className} />
       </motion.div>
     </AnimatePresence>
   )
