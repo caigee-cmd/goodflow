@@ -2,34 +2,35 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { Sparkles } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { Heart, Sparkles } from "lucide-react"
 import { LayoutGroup, motion } from "motion/react"
 import { brand } from "@/config/brand"
 import { cn } from "@/lib/utils"
 import { useChat } from "@/stores/chat"
 import { useRfq } from "@/stores/rfq"
+import { useSaved } from "@/stores/saved"
 import { Avatar, AvatarBadge, AvatarFallback } from "@/components/ui/avatar"
 import { AccountMenuSkeleton } from "@/components/ui/skeleton"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Wordmark } from "./wordmark"
 
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/categories", label: "Products" },
-  { href: "/categories?source=archive", label: "Archive" },
   { href: "/ranking", label: "Ranking" },
   { href: "/rfq", label: "RFQ List" },
 ]
 
 export function Topbar({ onAsk }: { onAsk: () => void }) {
   const pathname = usePathname()
-  const params = useSearchParams()
-  const source = params.get("source")
   const router = useRouter()
   const count = useRfq((state) => state.lines.length)
   const hydrated = useRfq((state) => state.hydrated)
   const reset = useRfq((state) => state.reset)
   const resetChat = useChat((state) => state.reset)
+  const savedCount = useSaved((state) => state.caseIds.length + state.productIds.length)
+  const savedHydrated = useSaved((state) => state.hydrated)
   const [menu, setMenu] = useState(false)
   const [menuReady, setMenuReady] = useState(false)
 
@@ -45,11 +46,7 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
               const active =
                 item.href === "/"
                   ? pathname === "/"
-                  : item.label === "Archive"
-                    ? pathname.startsWith("/categories") && source === "archive"
-                    : item.label === "Products"
-                      ? pathname.startsWith("/categories") && source !== "archive"
-                      : pathname.startsWith(item.href)
+                  : pathname.startsWith(item.href)
               return (
                 <Link
                   key={item.href}
@@ -80,6 +77,21 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
           </nav>
         </LayoutGroup>
         <div className="ml-auto flex items-center gap-3">
+          <Tooltip>
+            <TooltipTrigger
+              render={<Link href="/account" />}
+              aria-label={savedHydrated && savedCount > 0 ? `Favorites, ${savedCount} saved` : "Favorites"}
+              className="relative inline-flex size-9 shrink-0 items-center justify-center rounded-md text-el-black hover:bg-el-cream focus-visible:outline-2 focus-visible:outline-el-gold"
+            >
+              <Heart className="size-4" strokeWidth={1.5} />
+              {savedHydrated && savedCount > 0 ? (
+                <span className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-el-gold px-1 text-[10px] font-semibold text-el-black tabular-nums">
+                  {savedCount}
+                </span>
+              ) : null}
+            </TooltipTrigger>
+            <TooltipContent side="bottom">Favorites</TooltipContent>
+          </Tooltip>
           <button
             type="button"
             onClick={onAsk}

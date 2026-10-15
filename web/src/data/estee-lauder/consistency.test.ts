@@ -32,9 +32,12 @@ describe("demo numbers", () => {
   })
 
   it("default categories view", () => {
-    const archive = filterProducts(PRODUCTS, DEFAULT_FILTERS)
-    expect(archive).toHaveLength(7)
-    expect(sortProducts(archive, "featured")[0].id).toBe("arc-001")
+    const visible = filterProducts(PRODUCTS, DEFAULT_FILTERS)
+    expect(DEFAULT_FILTERS.source).toBe("all")
+    expect(visible).toEqual(PRODUCTS.filter((item) => item.brands.includes("estee-lauder")))
+    expect(visible.some((item) => item.source === "archive")).toBe(true)
+    expect(visible.some((item) => item.source === "external")).toBe(true)
+    expect(sortProducts(visible, "featured")[0].id).toBe("arc-001")
     expect(
       PRODUCTS.filter((x) => x.source === "external" && x.brands.includes("estee-lauder")).length,
     ).toBeGreaterThan(0)

@@ -43,8 +43,7 @@ function eyebrow(item: Product) {
 export function CategoryBrowser({ query }: { query: string }) {
   const router = useRouter()
   const parsed = useMemo(() => filtersFromParams(new URLSearchParams(query)), [query])
-  const [filters, setFilters] = useState<ProductFilters>(parsed.filters)
-  const [sort, setSort] = useState<SortId>(parsed.sort)
+  const { filters, sort } = parsed
   const [openId, setOpenId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const timer = useRef<number | null>(null)
@@ -52,8 +51,6 @@ export function CategoryBrowser({ query }: { query: string }) {
   const lines = useRfq((state) => state.lines)
 
   function apply(next: ProductFilters, nextSort = sort) {
-    setFilters(next)
-    setSort(nextSort)
     setLoading(true)
     if (timer.current) window.clearTimeout(timer.current)
     timer.current = window.setTimeout(() => setLoading(false), 700)

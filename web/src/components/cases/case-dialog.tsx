@@ -9,6 +9,7 @@ import { ImageStage } from "@/components/media/image-stage"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
 import { Modal, useModalClose } from "@/components/ui/modal"
 import { useSaved } from "@/stores/saved"
+import { ProductDialog } from "@/components/products/product-dialog"
 
 function CloseButton() {
   const close = useModalClose()
@@ -27,17 +28,16 @@ function CloseButton() {
 export function CaseDialog({
   id,
   onClose,
-  onOpenProduct,
 }: {
   id: string
   onClose: () => void
-  onOpenProduct?: (productId: string) => void
 }) {
   const item = caseById(id)
   const saved = useSaved((state) => state.caseIds.includes(id))
   const toggle = useSaved((state) => state.toggle)
   const [index, setIndex] = useState(0)
   const [direction, setDirection] = useState(1)
+  const [productId, setProductId] = useState<string | null>(null)
   const occasion = occasionLabel(item.occasions[0])
 
   function show(next: number) {
@@ -48,11 +48,15 @@ export function CaseDialog({
     setIndex(next)
   }
 
+  if (productId) {
+    return <ProductDialog key={productId} id={productId} onClose={onClose} onBack={() => setProductId(null)} />
+  }
+
   return (
     <Modal
       label={item.title}
       onClose={onClose}
-      className="relative grid h-[86vh] w-[92vw] max-w-[1200px] grid-cols-[1fr_300px] gap-8 rounded-[10px] bg-el-paper p-8 shadow-el-lg"
+      className="relative grid h-[86vh] w-[92vw] max-w-[1200px] grid-cols-[1fr_300px] gap-8 rounded-[10px] bg-el-paper p-8 text-left shadow-el-lg"
     >
         <CloseButton />
 
@@ -93,14 +97,14 @@ export function CaseDialog({
           <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">In this case</p>
           <div className="mt-4 grid grid-cols-2 gap-4 overflow-auto">
             {item.items.map((piece) => {
-              const openable = Boolean(piece.productId && onOpenProduct)
+              const openable = Boolean(piece.productId)
               return (
                 <button
                   key={piece.name}
                   type="button"
                   disabled={!openable}
-                  onClick={() => piece.productId && onOpenProduct?.(piece.productId)}
-                  className="text-center disabled:cursor-default"
+                  onClick={() => piece.productId && setProductId(piece.productId)}
+                  className="rounded-md text-center enabled:hover:text-el-gold-deep focus-visible:outline-2 focus-visible:outline-el-gold disabled:cursor-default"
                 >
                   <div className="mx-auto size-[88px] overflow-hidden rounded-full bg-el-cream">
                     <PlaceholderImage label={piece.name} src={piece.image} className="text-[24px]" />

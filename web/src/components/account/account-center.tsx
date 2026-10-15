@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Heart } from "lucide-react"
 import { CASES, PRODUCTS } from "@/data"
 import { RFQ_HISTORY, rfqHistoryTotal, type RfqHistoryItem } from "@/data/estee-lauder/rfq-history"
@@ -14,11 +15,14 @@ import { ProductDialog } from "@/components/products/product-dialog"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { AccountCenterSkeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type Tab = "favorites" | "history"
 
 export function AccountCenter() {
-  const [tab, setTab] = useState<Tab>("favorites")
+  const router = useRouter()
+  const params = useSearchParams()
+  const tab: Tab = params.get("tab") === "history" ? "history" : "favorites"
   const [caseId, setCaseId] = useState<string | null>(null)
   const [productId, setProductId] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
@@ -31,7 +35,7 @@ export function AccountCenter() {
 
   function openTab(next: Tab) {
     if (next === tab) return
-    setTab(next)
+    router.replace(next === "history" ? "/account?tab=history" : "/account", { scroll: false })
     setPaneReady(false)
     window.setTimeout(() => setPaneReady(true), 650)
   }
@@ -138,73 +142,87 @@ function FavoritesPane({
 
   return (
     <>
-      {saved.length === 0 && savedProducts.length === 0 ? (
-        <section className="flex h-[min(640px,calc(100svh-13rem))] flex-col items-center justify-center rounded-2xl bg-el-paper px-10 text-center">
-          <Heart className="size-5 text-el-gold-deep" strokeWidth={1.5} />
-          <p className="mt-5 text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">Favorites</p>
-          <h2 className="mt-2 font-heading text-[28px] leading-9">Nothing saved yet</h2>
-          <p className="mt-2 max-w-[280px] text-[13px] leading-5 text-el-taupe-ink">
-            Tap the heart on a case or product to keep it here.
-          </p>
-        </section>
-      ) : (
-        <>
-          <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">Favorites</p>
-          <h2 className="mt-2 font-heading text-[32px] leading-10">Saved</h2>
-          {saved.length ? <p className="mt-8 text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">Cases</p> : null}
-          <ul className="mt-4 grid grid-cols-2 gap-4">
-            {saved.map((item) => (
-              <li key={item.id} className="flex gap-3 rounded-lg bg-el-paper p-3">
-                <button type="button" onClick={() => onOpenCase(item.id)} className="size-24 shrink-0 overflow-hidden rounded-md bg-el-cream">
-                  <PlaceholderImage label={item.title} src={item.cover} className="text-[28px]" />
-                </button>
-                <div className="min-w-0 flex-1">
-                  <button type="button" onClick={() => onOpenCase(item.id)} className="line-clamp-2 text-left text-[14px] leading-5">
-                    {item.title}
+      <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">Favorites</p>
+      <h2 className="mt-2 font-heading text-[32px] leading-10">Saved</h2>
+      <Tabs defaultValue="cases" className="mt-6 gap-6">
+        <TabsList aria-label="Favorite type" className="h-10 bg-el-cream">
+          <TabsTrigger value="cases" className="min-w-28 px-4 text-[12px] data-active:bg-el-paper">
+            Cases <span className="text-el-taupe-ink tabular-nums">{saved.length}</span>
+          </TabsTrigger>
+          <TabsTrigger value="products" className="min-w-28 px-4 text-[12px] data-active:bg-el-paper">
+            Products <span className="text-el-taupe-ink tabular-nums">{savedProducts.length}</span>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="cases" className="min-h-72">
+          {saved.length === 0 ? (
+            <EmptyFavorites type="cases" />
+          ) : (
+            <ul className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {saved.map((item) => (
+                <li key={item.id} className="flex gap-3 rounded-lg bg-el-paper p-3">
+                  <button type="button" onClick={() => onOpenCase(item.id)} className="size-24 shrink-0 overflow-hidden rounded-md bg-el-cream">
+                    <PlaceholderImage label={item.title} src={item.cover} className="text-[28px]" />
                   </button>
-                  <p className="mt-1 text-[12px] text-el-taupe-ink">{item.client}</p>
-                  <button
-                    type="button"
-                    onClick={() => toggle(item.id)}
-                    className="mt-3 inline-flex items-center gap-1 text-[12px] text-el-taupe-ink hover:text-el-black"
-                  >
-                    <Heart className="size-3.5 fill-el-gold text-el-gold-deep" strokeWidth={1.5} />
-                    Remove
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          {savedProducts.length ? (
-            <>
-              <p className="mt-8 text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">Products</p>
-              <ul className="mt-4 grid grid-cols-2 gap-4">
-                {savedProducts.map((item) => (
-                  <li key={item.id} className="flex gap-3 rounded-lg bg-el-paper p-3">
-                    <button type="button" onClick={() => onOpenProduct(item.id)} className="size-24 shrink-0 overflow-hidden rounded-md bg-el-cream">
-                      <PlaceholderImage label={item.name} src={item.images[0]} className="text-[28px]" />
+                  <div className="min-w-0 flex-1">
+                    <button type="button" onClick={() => onOpenCase(item.id)} className="line-clamp-2 text-left text-[14px] leading-5">
+                      {item.title}
                     </button>
-                    <div className="min-w-0 flex-1">
-                      <button type="button" onClick={() => onOpenProduct(item.id)} className="line-clamp-2 text-left text-[14px] leading-5">
-                        {item.name}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => toggleProduct(item.id)}
-                        className="mt-3 inline-flex items-center gap-1 text-[12px] text-el-taupe-ink hover:text-el-black"
-                      >
-                        <Heart className="size-3.5 fill-el-gold text-el-gold-deep" strokeWidth={1.5} />
-                        Remove
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-        </>
-      )}
+                    <p className="mt-1 text-[12px] text-el-taupe-ink">{item.client}</p>
+                    <button
+                      type="button"
+                      aria-label={`Remove ${item.title} from favorites`}
+                      onClick={() => toggle(item.id)}
+                      className="mt-3 inline-flex items-center gap-1 text-[12px] text-el-taupe-ink hover:text-el-black"
+                    >
+                      <Heart className="size-3.5 fill-el-gold text-el-gold-deep" strokeWidth={1.5} />
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </TabsContent>
+        <TabsContent value="products" className="min-h-72">
+          {savedProducts.length === 0 ? (
+            <EmptyFavorites type="products" />
+          ) : (
+            <ul className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+              {savedProducts.map((item) => (
+                <li key={item.id} className="flex gap-3 rounded-lg bg-el-paper p-3">
+                  <button type="button" onClick={() => onOpenProduct(item.id)} className="size-24 shrink-0 overflow-hidden rounded-md bg-el-cream">
+                    <PlaceholderImage label={item.name} src={item.images[0]} className="text-[28px]" />
+                  </button>
+                  <div className="min-w-0 flex-1">
+                    <button type="button" onClick={() => onOpenProduct(item.id)} className="line-clamp-2 text-left text-[14px] leading-5">
+                      {item.name}
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Remove ${item.name} from favorites`}
+                      onClick={() => toggleProduct(item.id)}
+                      className="mt-3 inline-flex items-center gap-1 text-[12px] text-el-taupe-ink hover:text-el-black"
+                    >
+                      <Heart className="size-3.5 fill-el-gold text-el-gold-deep" strokeWidth={1.5} />
+                      Remove
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </TabsContent>
+      </Tabs>
     </>
+  )
+}
+
+function EmptyFavorites({ type }: { type: "cases" | "products" }) {
+  return (
+    <div className="flex min-h-72 flex-col items-center justify-center border-t border-el-line text-center">
+      <Heart className="size-5 text-el-gold-deep" strokeWidth={1.5} />
+      <h3 className="mt-4 font-heading text-[24px] leading-8">No saved {type}</h3>
+    </div>
   )
 }
 

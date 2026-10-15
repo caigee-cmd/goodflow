@@ -13,7 +13,7 @@ export type ProductFilters = {
 }
 
 export const DEFAULT_FILTERS: ProductFilters = {
-  source: "archive",
+  source: "all",
   brands: ["estee-lauder"],
   categories: [],
   occasions: [],

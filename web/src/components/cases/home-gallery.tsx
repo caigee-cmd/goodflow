@@ -161,7 +161,7 @@ export function HomeGallery() {
         <ArchiveRail onOpenProduct={setProductId} />
       </div>
 
-      {openId ? <CaseDialog id={openId} onClose={() => setOpenId(null)} onOpenProduct={setProductId} /> : null}
+      {openId ? <CaseDialog key={openId} id={openId} onClose={() => setOpenId(null)} /> : null}
       {productId ? <ProductDialog id={productId} onClose={() => setProductId(null)} /> : null}
     </>
   )
