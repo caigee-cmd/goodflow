@@ -9,10 +9,11 @@ import { PlaceholderImage } from "@/components/media/placeholder-image"
 import { Button } from "@/components/ui/button"
 import { CaseGridSkeleton } from "@/components/ui/skeleton"
 import { useOpenAdvisor } from "@/components/brand/advisor-context"
-import { LayoutGroup, motion } from "motion/react"
+import { LayoutGroup, motion, useReducedMotion } from "motion/react"
 import { useSaved } from "@/stores/saved"
 import { ArchiveRail } from "./archive-rail"
 import { CaseDialog } from "./case-dialog"
+import { CaseUnder, CornerPeel } from "./corner-peel"
 import { ProductDialog } from "@/components/products/product-dialog"
 
 const CHIPS: { id: HomeChipId | "all"; label: string }[] = [
@@ -24,6 +25,32 @@ const CHIPS: { id: HomeChipId | "all"; label: string }[] = [
 ]
 
 const CHIP_SPRING = { type: "spring" as const, stiffness: 420, damping: 34, mass: 0.7 }
+
+function CaseCover({ item }: { item: Case }) {
+  const reduce = useReducedMotion()
+  const under = item.images[0] ?? item.items[0]?.image
+  const peelable = !reduce && Boolean(under)
+
+  return (
+    <CornerPeel
+      enabled={peelable}
+      className="rounded-[8px] bg-el-cream"
+      style={{ aspectRatio: item.coverAspect }}
+      under={under ? <CaseUnder src={under} label={item.title} client={item.client} /> : null}
+      cover={
+        <PlaceholderImage
+          label={item.title}
+          src={item.cover}
+          className={
+            peelable
+              ? undefined
+              : "transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
+          }
+        />
+      }
+    />
+  )
+}
 
 function CaseCard({ item, onOpen }: { item: Case; onOpen: (id: string) => void }) {
   const saved = useSaved((state) => state.caseIds.includes(item.id))
@@ -42,13 +69,7 @@ function CaseCard({ item, onOpen }: { item: Case; onOpen: (id: string) => void }
       </button>
       <div className="relative">
         <button type="button" onClick={() => onOpen(item.id)} aria-label={item.title} className="block w-full">
-          <div className="relative overflow-hidden rounded-[8px] bg-el-cream" style={{ aspectRatio: item.coverAspect }}>
-            <PlaceholderImage
-              label={item.title}
-              src={item.cover}
-              className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
-            />
-          </div>
+          <CaseCover item={item} />
         </button>
         <button
           type="button"

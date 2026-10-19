@@ -46,6 +46,15 @@ const Floating = ({
     >()
   )
   const mousePositionRef = useMousePositionRef(containerRef as React.RefObject<HTMLElement>)
+  const pointerMoved = useRef(false)
+
+  useEffect(() => {
+    const mark = () => {
+      pointerMoved.current = true
+    }
+    window.addEventListener("pointermove", mark, { once: true })
+    return () => window.removeEventListener("pointermove", mark)
+  }, [])
 
   const registerElement = useCallback(
     (id: string, element: HTMLDivElement, depth: number) => {
@@ -64,13 +73,15 @@ const Floating = ({
 
   useAnimationFrame(() => {
     if (!containerRef.current) return
+    // 以容器中心为原点，鼠标居中（或尚未移动）时元素停在原始位置
+    const rect = containerRef.current.getBoundingClientRect()
 
     elementsMap.current.forEach((data) => {
       const strength = (data.depth * sensitivity) / 20
 
       // Calculate new target position
-      const newTargetX = mousePositionRef.current.x * strength
-      const newTargetY = mousePositionRef.current.y * strength
+      const newTargetX = (pointerMoved.current ? mousePositionRef.current.x - rect.width / 2 : 0) * strength
+      const newTargetY = (pointerMoved.current ? mousePositionRef.current.y - rect.height / 2 : 0) * strength
 
       // Check if we need to update
       const dx = newTargetX - data.currentPosition.x
@@ -103,12 +114,14 @@ interface FloatingElementProps {
   children: ReactNode
   className?: string
   depth?: number
+  style?: React.CSSProperties
 }
 
 export const FloatingElement = ({
   children,
   className,
   depth = 1,
+  style,
 }: FloatingElementProps) => {
   const elementRef = useRef<HTMLDivElement>(null)
   const elementId = useId()
@@ -128,6 +141,7 @@ export const FloatingElement = ({
     <div
       ref={elementRef}
       className={cn("absolute will-change-transform", className)}
+      style={style}
     >
       {children}
     </div>

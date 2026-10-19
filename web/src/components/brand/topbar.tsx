@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { Heart, Sparkles } from "lucide-react"
-import { LayoutGroup, motion } from "motion/react"
+import { LayoutGroup, motion, useMotionValueEvent, useReducedMotion, useScroll } from "motion/react"
 import { brand } from "@/config/brand"
 import { cn } from "@/lib/utils"
 import { useChat } from "@/stores/chat"
@@ -34,8 +34,30 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
   const [menu, setMenu] = useState(false)
   const [menuReady, setMenuReady] = useState(false)
 
+  // 首页：顶部导航在全屏 hero 区域隐藏，滚过 hero 后 fixed 淡入；其他页面保持 sticky
+  const isHome = pathname === "/"
+  const reduce = useReducedMotion()
+  const { scrollY } = useScroll()
+  const [pastHero, setPastHero] = useState(false)
+  const check = (y: number) => setPastHero(y > window.innerHeight * 0.85)
+  useMotionValueEvent(scrollY, "change", check)
+  useEffect(() => {
+    check(window.scrollY)
+  }, [pathname])
+  const shown = !isHome || pastHero
+
   return (
-    <header className="sticky top-0 z-40 h-[72px] border-b border-el-line bg-el-canvas">
+    <motion.header
+      initial={false}
+      animate={shown ? { y: 0, opacity: 1 } : { y: reduce ? 0 : -24, opacity: 0 }}
+      transition={{ duration: shown ? 0.28 : 0.2, ease: [0.22, 1, 0.36, 1] }}
+      inert={!shown}
+      className={cn(
+        "top-0 z-40 h-[72px] border-b border-el-line bg-el-canvas",
+        isHome ? "fixed inset-x-0" : "sticky",
+        !shown && "pointer-events-none",
+      )}
+    >
       <div className="mx-auto flex h-full max-w-[1360px] items-center gap-8 px-10">
         <Link href="/" className="text-el-black text-[18px] leading-6" aria-label={brand.wordmark}>
           <Wordmark />
@@ -153,6 +175,6 @@ export function Topbar({ onAsk }: { onAsk: () => void }) {
           </div>
         </div>
       </div>
-    </header>
+    </motion.header>
   )
 }
