@@ -4,7 +4,7 @@ import Image from "next/image"
 import { motion, useTransform, type MotionValue } from "motion/react"
 import Floating, { FloatingElement } from "@/components/ui/parallax-floating"
 import { cn } from "@/lib/utils"
-import { HeroPeelCard } from "./hero-peel-card"
+import { caseById } from "@/data"
 
 type Item = {
   src: string
@@ -15,7 +15,7 @@ type Item = {
   w: number
   h?: number
   rotate: number
-  /** 深色案例卡片：可 hover 卷角（Canvas UI Peel / 轻量回退），点击打开案例 */
+  /** 深色案例卡片：hover 轻微放大，点击打开案例 */
   caseId?: string
   far?: boolean
   mobile?: boolean
@@ -32,6 +32,28 @@ const ITEMS: Item[] = [
   { caseId: "case-02", src: "/demo/cases/case-02/cover.jpg", depth: 1.2, x: 72, y: 82, w: 180, h: 220, rotate: -4 },
   { src: "/home-floating/notebook.png", depth: 0.9, x: 91, y: 75, w: 150, rotate: 7 },
 ]
+
+function HeroCaseCard({ caseId, width, height, onOpen }: { caseId: string; width: string; height: string; onOpen: (id: string) => void }) {
+  const item = caseById(caseId)
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(caseId)}
+      aria-label={`View case: ${item.title}`}
+      className="group pointer-events-auto relative block cursor-pointer overflow-hidden rounded-[14px] bg-el-cream shadow-[0_24px_48px_rgb(20_20_40/0.28)] ring-1 ring-white/40 outline-none focus-visible:ring-2 focus-visible:ring-el-gold"
+      style={{ width, height }}
+    >
+      <Image
+        src={item.cover}
+        alt={item.title}
+        fill
+        preload
+        sizes="240px"
+        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
+      />
+    </button>
+  )
+}
 
 // 1440 设计宽度下的像素尺寸，窄屏按 vw 等比缩小
 const size = (px: number) => `min(${px}px, ${(px / 14.4).toFixed(2)}vw)`
@@ -67,7 +89,7 @@ function FloatingItem({
         <motion.div style={{ x, y, scale, opacity }} className="will-change-transform">
           <div style={{ transform: `rotate(${it.rotate}deg)` }} className={cn(it.far && "opacity-60 blur-[1.5px]")}>
             {it.caseId ? (
-              <HeroPeelCard caseId={it.caseId} width={size(it.w)} height={size(h)} designWidth={it.w} onOpen={onOpen} />
+              <HeroCaseCard caseId={it.caseId} width={size(it.w)} height={size(h)} onOpen={onOpen} />
             ) : (
               <Image
                 src={it.src}

@@ -5,6 +5,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from "motion/react"
 import { HomeFloatingImages } from "./home-floating-images"
 import { HomeSearch } from "./home-search"
 import { CaseDialog } from "./case-dialog"
+import { HeroCenterpiece } from "./hero-centerpiece"
 
 // 首页全屏 hero：标题/搜索居中，浮动图铺满视口；向下滚动时图片向外扩散、文字上移淡出
 export function HomeHero() {
@@ -38,6 +39,10 @@ export function HomeHero() {
         <HomeFloatingImages progress={scrollYProgress} reduce={reduce} onOpen={setOpenId} />
       </motion.div>
       <motion.div className="pointer-events-none relative z-10 w-full" style={{ y: contentY, scale: contentScale, opacity: contentOpacity }}>
+        {/* 绝对定位在标题上方，不改变标题/搜索的居中位置 */}
+        <div className="absolute bottom-full left-1/2 hidden -translate-x-1/2 lg:block">
+          <HeroCenterpiece />
+        </div>
         <h1 className="pointer-events-auto mx-auto w-fit font-heading text-[44px] leading-[52px] font-medium tracking-[0.04em] uppercase md:text-[56px] md:leading-[64px]">
           Discover better merch
         </h1>
