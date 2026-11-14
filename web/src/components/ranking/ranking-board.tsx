@@ -191,7 +191,7 @@ export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?:
       </div>
 
       <p className="text-[12px] leading-[18px] text-el-taupe-ink">
-        Based on GoodFlow public & anonymized data ({DRINKWARE.period}). No Estée Lauder internal data is used.
+        Based on GoodFlow public & anonymized data ({DRINKWARE.period}). No xBeauty internal data is used.
       </p>
       {productId ? <ProductDialog id={productId} onClose={() => setProductId(null)} /> : null}
     </div>

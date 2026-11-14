@@ -25,7 +25,7 @@ export const PRODUCTS: Product[] = [
     campaign: "Lunar New Year 2026 · APAC VIP",
     regions: ["APAC"],
     notes:
-      "Sent to top-tier VIPs in Greater China with the Advanced Night Repair Lunar New Year set; the most-clicked archive item of the season.",
+      "Sent to top-tier VIPs in Greater China with the xBeauty skincare Lunar New Year set; the most-clicked archive item of the season.",
     inspiration: "Red lacquer and a gold-leaf horse, echoing the Lunar New Year 2026 key visual.",
     material: "Lacquered MDF, brass hardware, velvet lining",
     packaging: "Rigid gift box with gold-foil sleeve",
@@ -86,7 +86,7 @@ export const PRODUCTS: Product[] = [
     year: 2025,
     campaign: "Holiday 2025 · Gift with Purchase",
     regions: ["EMEA", "Americas"],
-    notes: "Midnight-blue velvet pouch for the Advanced Night Repair holiday set.",
+    notes: "Midnight-blue velvet pouch for the xBeauty serum holiday set.",
     inspiration: "A pouch dark enough to read as evening, soft enough to reuse.",
     material: "Cotton velvet, satin lining",
     packaging: "Polybag in carton",
@@ -119,7 +119,7 @@ export const PRODUCTS: Product[] = [
   {
     id: "arc-006",
     source: "archive",
-    name: "Night Repair Media Kit Box",
+    name: "Serum Launch Media Kit Box",
     brands: ["estee-lauder"],
     category: "festive",
     occasions: ["launch"],

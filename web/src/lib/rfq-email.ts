@@ -34,7 +34,7 @@ export function buildRfqEmail(state: RfqEmailInput): { to: string; subject: stri
   const body = [
     "Hi GoodFlow team,",
     "",
-    `Please quote the following items for Estée Lauder — ${project}.`,
+    `Please quote the following items for xBeauty — ${project}.`,
     "",
     `Needed by: ${fmtDate(state.neededBy)} (order by ${fmtDate(orderBy(state.neededBy, maxLead))})`,
     `Delivery region: ${state.region}`,

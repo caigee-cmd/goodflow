@@ -39,7 +39,7 @@ export function routeAdvisor(text: string): AdvisorTurn {
   if (q === Q.archiveLny.toLowerCase() || (/(lunar|lny|new year)/.test(q) && /(last|2026|past|history|did we)/.test(q))) {
     return {
       id: "A1",
-      steps: ["Searching Estée Lauder Archive", "Filtering: APAC · Lunar New Year 2026", "Ranking by case clicks · Top 3"],
+      steps: ["Searching xBeauty Archive", "Filtering: APAC · Lunar New Year 2026", "Ranking by case clicks · Top 3"],
       reply: `**Lunar New Year 2026 · Year of the Horse**
 
 APAC gifting was built around three pieces.
@@ -61,7 +61,7 @@ Lead times ran **45–70 days**, and MOQs started at **3,000**.`,
       id: "B1",
       steps: [
         "Reading brief: Lunar New Year 2027 · Year of the Goat · ≤ $60/unit",
-        "Searching Estée Lauder Archive + External Picks",
+        "Searching xBeauty Archive + External Picks",
         "Checking lead times against Jan 15, 2027 · 10 fit · top 4",
       ],
       reply: `**Lunar New Year 2027 · Year of the Goat**

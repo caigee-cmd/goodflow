@@ -31,7 +31,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: `${brand.wordmark} · ${brand.productName}`,
-  description: "A gifting space for Estée Lauder. Demo environment.",
+  description: "A gifting space for xBeauty. Demo environment.",
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

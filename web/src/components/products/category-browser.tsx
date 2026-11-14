@@ -16,7 +16,7 @@ import { ProductDialog } from "./product-dialog"
 
 const SOURCES = [
   { id: "all", label: "All" },
-  { id: "archive", label: "Estée Lauder Archive" },
+  { id: "archive", label: "xBeauty Archive" },
   { id: "external", label: "External Picks" },
 ] as const
 

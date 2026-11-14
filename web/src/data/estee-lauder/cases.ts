@@ -41,8 +41,8 @@ const slots: Slot[] = [
   },
   {
     id: "case-02",
-    title: "Night repair, day-long glow.",
-    client: "Estée Lauder · Global",
+    title: "A thoughtful launch, a lasting impression.",
+    client: "xBeauty · Global",
     kind: "elc",
     occasions: ["launch"],
     year: 2025,
@@ -85,7 +85,7 @@ const slots: Slot[] = [
   {
     id: "case-04",
     title: "The Year of the Snake, in porcelain.",
-    client: "Estée Lauder · Greater China",
+    client: "xBeauty · Greater China",
     kind: "elc",
     occasions: ["lunar-new-year", "vip"],
     year: 2025,
@@ -171,7 +171,7 @@ const slots: Slot[] = [
   {
     id: "case-08",
     title: "Gold foil for the front row.",
-    client: "Estée Lauder · Paris",
+    client: "xBeauty · Paris",
     kind: "elc",
     occasions: ["holiday", "launch"],
     year: 2024,
