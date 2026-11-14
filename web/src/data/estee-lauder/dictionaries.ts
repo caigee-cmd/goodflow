@@ -1,5 +1,5 @@
 export const BRANDS = [
-  { id: "estee-lauder", label: "Estée Lauder" },
+  { id: "estee-lauder", label: "xBeauty" },
   { id: "la-mer", label: "La Mer" },
   { id: "mac", label: "MAC" },
   { id: "clinique", label: "Clinique" },

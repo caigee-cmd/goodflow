@@ -4,7 +4,7 @@ import { Wordmark } from "@/components/brand/wordmark"
 import { Separator } from "@/components/ui/separator"
 import styles from "./login.module.css"
 
-// Based on the shadcn `login-02` block (two columns, cover image), restyled for Estée Lauder.
+// Based on the shadcn `login-02` block (two columns, cover image), restyled for xBeauty.
 const slides = [
   { src: "/demo/login/login-b2.jpg", position: "38% 70%", delay: "-1.5s", caption: "The Fragrance Edit" },
   { src: "/demo/login/login-a2.jpg", position: "55% 60%", delay: "7.5s", caption: "Silk & Light" },
@@ -24,9 +24,8 @@ export default function LoginPage() {
           }}
         />
         <div className="relative flex flex-col items-start">
-          <Wordmark className="text-[18px] leading-6 text-el-black" />
-          <span className="mt-4 block h-px w-10 bg-el-gold" />
-          <p className="mt-4 text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
+          <Wordmark className="h-12 w-auto" />
+          <p className="mt-5 text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
             {brand.productName}
           </p>
         </div>

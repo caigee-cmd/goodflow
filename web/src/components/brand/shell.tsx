@@ -15,7 +15,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-svh flex-col">
-      <Suspense fallback={<div className="h-[72px]" />}>
+      <Suspense fallback={pathname === "/" ? null : <div className="h-[72px]" />}>
         <Topbar onAsk={() => setAdvisor((open) => !open)} />
       </Suspense>
       <AdvisorProvider open={() => setAdvisor(true)}>

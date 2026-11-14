@@ -1,15 +1,15 @@
 export const brand = {
   id: "estee-lauder",
   dataDir: "estee-lauder",
-  wordmark: "Estée Lauder",
-  logoSrc: null as string | null,
+  wordmark: "xBeauty",
+  logoSrc: "/brand/xbeauty-wordmark.png",
   productName: "Product Intelligence",
   poweredBy: "GoodFlow",
   user: {
     name: "Anna Chen",
     initials: "AC",
-    title: "Gifting & Procurement, Estée Lauder APAC",
-    email: "buyer@esteelauder.com",
+    title: "Gifting & Procurement, xBeauty APAC",
+    email: "buyer@xbeauty.com",
     password: "demo",
   },
   rfq: {

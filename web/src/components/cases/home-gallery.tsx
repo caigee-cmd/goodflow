@@ -25,6 +25,18 @@ const CHIPS: { id: HomeChipId | "all"; label: string }[] = [
 
 const CHIP_SPRING = { type: "spring" as const, stiffness: 420, damping: 34, mass: 0.7 }
 
+function CaseCover({ item }: { item: Case }) {
+  return (
+    <div className="relative overflow-hidden rounded-[8px] bg-el-cream" style={{ aspectRatio: item.coverAspect }}>
+      <PlaceholderImage
+        label={item.title}
+        src={item.cover}
+        className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
+      />
+    </div>
+  )
+}
+
 function CaseCard({ item, onOpen }: { item: Case; onOpen: (id: string) => void }) {
   const saved = useSaved((state) => state.caseIds.includes(item.id))
   const toggle = useSaved((state) => state.toggle)
@@ -42,13 +54,7 @@ function CaseCard({ item, onOpen }: { item: Case; onOpen: (id: string) => void }
       </button>
       <div className="relative">
         <button type="button" onClick={() => onOpen(item.id)} aria-label={item.title} className="block w-full">
-          <div className="relative overflow-hidden rounded-[8px] bg-el-cream" style={{ aspectRatio: item.coverAspect }}>
-            <PlaceholderImage
-              label={item.title}
-              src={item.cover}
-              className="transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
-            />
-          </div>
+          <CaseCover item={item} />
         </button>
         <button
           type="button"

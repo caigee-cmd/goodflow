@@ -40,7 +40,7 @@ export function SignInForm() {
         Sign in
       </h1>
       <p className="mt-3 font-heading text-[16px] leading-6 font-normal tracking-[0.08em] text-el-taupe-ink uppercase">
-        Use your Estée Lauder account
+        Use your xBeauty account
       </p>
 
       <label className={`${labelClass} mt-10`}>

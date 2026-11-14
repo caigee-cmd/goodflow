@@ -189,7 +189,7 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
             <Sparkles className="size-8 text-el-gold" strokeWidth={1.5} />
             <p className="mt-4 text-[14px] leading-[22px]">{GREETING}</p>
             <p className="mt-6 text-[11px] leading-4 text-el-taupe-ink">
-              Answers use Estée Lauder Archive and GoodFlow public data.
+              Answers use xBeauty Archive and GoodFlow public data.
             </p>
           </div>
         ) : (

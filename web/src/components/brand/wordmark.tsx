@@ -6,7 +6,11 @@ export function Wordmark({ className }: { className?: string }) {
     return (
       // Official wordmark, once licensed. Text fallback stays in the tree for the name.
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={brand.logoSrc} alt={brand.wordmark} className={cn("h-6 w-auto", className)} />
+      <img
+        src={brand.logoSrc}
+        alt={brand.wordmark}
+        className={cn("h-9 w-auto shrink-0 object-contain", className)}
+      />
     )
   }
 
