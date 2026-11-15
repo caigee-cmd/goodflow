@@ -1,12 +1,14 @@
 import { OCCASIONS } from "@/data"
 import type { Case, HomeChipId, OccasionId, Product } from "@/lib/types"
-import { fromPrice } from "@/lib/pricing"
+import { fromPrice, hasPricing, minQty } from "@/lib/pricing"
 
-export function occasionLabel(id: OccasionId) {
+export function occasionLabel(id?: OccasionId) {
+  if (!id) return ""
   return OCCASIONS.find((item) => item.id === id)?.label ?? id
 }
 
-export function occasionShort(id: OccasionId) {
+export function occasionShort(id?: OccasionId) {
+  if (!id) return ""
   return OCCASIONS.find((item) => item.id === id)?.short ?? id
 }
 
@@ -15,28 +17,39 @@ export function sortCases(cases: Case[], chip: HomeChipId | "all") {
   return [...pool].sort((a, b) => {
     const featured = Number(Boolean(b.featured)) - Number(Boolean(a.featured))
     if (featured) return featured
-    if (b.year !== a.year) return b.year - a.year
+    const ay = a.year ?? 0
+    const by = b.year ?? 0
+    if (by !== ay) return by - ay
     return a.id.localeCompare(b.id)
   })
 }
 
 export function featuredProducts(products: Product[]) {
   return products
-    .filter((item) => item.featured && item.source === "archive")
-    .sort((a, b) => b.clicks - a.clicks)
+    .filter((item) => item.featured)
+    .sort((a, b) => (b.clicks ?? 0) - (a.clicks ?? 0))
 }
 
 export function fromLabel(product: Product) {
-  const price = fromPrice(product).toLocaleString("en-US", {
+  if (!hasPricing(product)) return ""
+  const price = fromPrice(product)!
+  const formatted = price.toLocaleString("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
   })
-  return `From ${price} · MOQ ${product.priceTiers[0].moq.toLocaleString("en-US")}`
+  return `From ${formatted} · MOQ ${minQty(product).toLocaleString("en-US")}`
 }
 
 export function campaignShort(product: Product) {
-  if (product.source !== "archive") return ""
-  const year = product.campaign.match(/\d{4}/)?.[0] ?? String(product.year)
-  return `${year} ${occasionShort(product.occasions[0])}`
+  const bits: string[] = []
+  if (product.source === "archive" && product.campaign) {
+    const year = product.campaign.match(/\d{4}/)?.[0] ?? (product.year != null ? String(product.year) : "")
+    if (year) bits.push(year)
+  } else if (product.year != null) {
+    bits.push(String(product.year))
+  }
+  if (product.occasions[0]) bits.push(occasionShort(product.occasions[0]))
+  else if (product.theme) bits.push(product.theme)
+  return bits.join(" ")
 }

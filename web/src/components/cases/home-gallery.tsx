@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Heart, Sparkles } from "lucide-react"
 import { CASES } from "@/data"
-import { sortCases } from "@/lib/catalog"
-import type { Case, HomeChipId } from "@/lib/types"
+import { HOME_GALLERY_CHIPS, casesForHomeTheme } from "@/data/estee-lauder/themes"
+import type { Case, ThemeLabel } from "@/lib/types"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
 import { Button } from "@/components/ui/button"
 import { CaseGridSkeleton } from "@/components/ui/skeleton"
@@ -14,14 +14,6 @@ import { useSaved } from "@/stores/saved"
 import { ArchiveRail } from "./archive-rail"
 import { CaseDialog } from "./case-dialog"
 import { ProductDialog } from "@/components/products/product-dialog"
-
-const CHIPS: { id: HomeChipId | "all"; label: string }[] = [
-  { id: "all", label: "Popular" },
-  { id: "heritage", label: "Holiday" },
-  { id: "elevated", label: "Beauty" },
-  { id: "everyday", label: "Lifestyle" },
-  { id: "collab", label: "Corporate" },
-]
 
 const CHIP_SPRING = { type: "spring" as const, stiffness: 420, damping: 34, mass: 0.7 }
 
@@ -78,11 +70,11 @@ export function HomeGallery() {
   const onAsk = useOpenAdvisor()
   const board = useRef<HTMLDivElement>(null)
   const [columns, setColumns] = useState(3)
-  const [chip, setChip] = useState<HomeChipId | "all">("all")
+  const [chip, setChip] = useState<ThemeLabel | "all">("all")
   const [loading, setLoading] = useState(false)
   const [openId, setOpenId] = useState<string | null>(null)
   const [productId, setProductId] = useState<string | null>(null)
-  const cases = useMemo(() => sortCases(CASES, chip), [chip])
+  const cases = useMemo(() => casesForHomeTheme(CASES, chip), [chip])
   const lanes = Array.from({ length: columns }, () => [] as Case[])
   cases.forEach((item, index) => lanes[index % columns].push(item))
 
@@ -100,8 +92,8 @@ export function HomeGallery() {
     <>
       <div className="flex flex-wrap items-center justify-center gap-2">
         <LayoutGroup id="home-filters">
-          <div className="flex items-center gap-2" role="tablist" aria-label="Cases">
-            {CHIPS.map((item) => {
+          <div className="flex items-center gap-2" role="tablist" aria-label="Themes">
+            {HOME_GALLERY_CHIPS.map((item) => {
               const selected = item.id === chip
               return (
                 <button

@@ -8,6 +8,7 @@ import { BRANDS, CATEGORIES, OCCASIONS, PRICE_OPTIONS, PRODUCTS } from "@/data"
 import { filtersFromParams, paramsFromFilters } from "@/lib/category-query"
 import { filterProducts, matches, sortProducts, type ProductFilters, type SortId } from "@/lib/filters"
 import { fromLabel, occasionShort } from "@/lib/catalog"
+import { hasPricing } from "@/lib/pricing"
 import type { CategoryId, OccasionId, Product } from "@/lib/types"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
 import { useRfq } from "@/stores/rfq"
@@ -33,11 +34,11 @@ function countFor(key: "brands" | "categories" | "occasions", id: string, filter
 }
 
 function eyebrow(item: Product) {
+  const brand = BRANDS.find((entry) => entry.id === item.brands[0])?.label ?? ""
   if (item.source === "archive") {
-    const label = BRANDS.find((entry) => entry.id === item.brands[0])?.label ?? ""
-    return `${label} · ${occasionShort(item.occasions[0])} ${item.year}`
+    return [brand, item.occasions[0] ? occasionShort(item.occasions[0]) : "", item.year].filter(Boolean).join(" · ")
   }
-  return `By ${item.maker}`
+  return [item.maker ? `By ${item.maker}` : brand, item.theme].filter(Boolean).join(" · ")
 }
 
 export function CategoryBrowser({ query }: { query: string }) {
@@ -66,6 +67,18 @@ export function CategoryBrowser({ query }: { query: string }) {
   }
 
   const visible = sortProducts(filterProducts(PRODUCTS, filters), sort)
+  const anyArchive = PRODUCTS.some((item) => item.source === "archive")
+  const anyPriced = PRODUCTS.some(hasPricing)
+  const anyCategory = PRODUCTS.some((item) => item.category)
+  const anyClicks = PRODUCTS.some((item) => (item.clicks ?? 0) > 0)
+  const brandOptions = BRANDS.filter((item) => countFor("brands", item.id, { ...filters, brands: [] }))
+  const occasionOptions = OCCASIONS.filter((item) => countFor("occasions", item.id, { ...filters, occasions: [] }))
+  const sources = anyArchive ? SOURCES : SOURCES.filter((item) => item.id !== "archive")
+  const sorts = SORTS.filter((item) => {
+    if (item.id === "price-asc") return anyPriced
+    if (item.id === "clicks") return anyClicks
+    return true
+  })
 
   return (
     <>
@@ -80,8 +93,9 @@ export function CategoryBrowser({ query }: { query: string }) {
               : "Everything available for this account, including products made before and new recommendations."}
           </p>
         </div>
+        {anyArchive ? (
         <div className="flex h-10 rounded-md border border-el-line bg-el-paper p-0.5" role="tablist" aria-label="Source">
-          {SOURCES.map((source) => {
+          {sources.map((source) => {
             const selected = filters.source === source.id
             return (
               <button
@@ -101,6 +115,7 @@ export function CategoryBrowser({ query }: { query: string }) {
             )
           })}
         </div>
+        ) : null}
       </header>
 
       <div className="mt-10 grid grid-cols-[240px_1fr] items-start gap-10">
@@ -113,7 +128,7 @@ export function CategoryBrowser({ query }: { query: string }) {
             Clear all
           </button>
           <FilterGroup title="Brands">
-            {BRANDS.map((item) => (
+            {brandOptions.map((item) => (
               <FilterRow
                 key={item.id}
                 label={item.label}
@@ -123,8 +138,9 @@ export function CategoryBrowser({ query }: { query: string }) {
               />
             ))}
           </FilterGroup>
+          {anyCategory ? (
           <FilterGroup title="Category">
-            {CATEGORIES.map((item) => (
+            {CATEGORIES.filter((item) => countFor("categories", item.id, { ...filters, categories: [] })).map((item) => (
               <FilterRow
                 key={item.id}
                 label={item.label}
@@ -134,8 +150,10 @@ export function CategoryBrowser({ query }: { query: string }) {
               />
             ))}
           </FilterGroup>
+          ) : null}
+          {occasionOptions.length ? (
           <FilterGroup title="Occasion">
-            {OCCASIONS.map((item) => (
+            {occasionOptions.map((item) => (
               <FilterRow
                 key={item.id}
                 label={item.label}
@@ -145,6 +163,8 @@ export function CategoryBrowser({ query }: { query: string }) {
               />
             ))}
           </FilterGroup>
+          ) : null}
+          {anyPriced ? (
           <FilterGroup title="Price per unit">
             {PRICE_OPTIONS.map((option) => (
               <FilterRow
@@ -155,6 +175,7 @@ export function CategoryBrowser({ query }: { query: string }) {
               />
             ))}
           </FilterGroup>
+          ) : null}
         </aside>
 
         <section>
@@ -179,7 +200,7 @@ export function CategoryBrowser({ query }: { query: string }) {
                 onChange={(event) => apply(filters, event.target.value as SortId)}
                 className="ml-2 h-9 rounded-md border border-el-line bg-el-paper px-2 text-[13px] text-el-black"
               >
-                {SORTS.map((option) => (
+                {sorts.map((option) => (
                   <option key={option.id} value={option.id}>
                     {option.label}
                   </option>
@@ -227,7 +248,12 @@ export function CategoryBrowser({ query }: { query: string }) {
                   <button type="button" onClick={() => setOpenId(item.id)} className="mt-1 block w-full truncate text-left text-[15px] leading-[22px]">
                     {item.name}
                   </button>
+                  {item.notes ? (
+                    <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-el-taupe-ink">{item.notes.split("\n\n")[0]}</p>
+                  ) : null}
+                  {fromLabel(item) ? (
                   <p className="mt-1 text-[13px] leading-5 tabular-nums text-el-taupe-ink">{fromLabel(item)}</p>
+                  ) : null}
                 </motion.div>
               ))}
               </AnimatePresence>

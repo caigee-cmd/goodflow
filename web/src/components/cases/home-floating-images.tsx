@@ -23,14 +23,14 @@ type Item = {
 
 // 全屏摆法：深色案例卡片 + 产品 PNG 围绕中心标题分布
 const ITEMS: Item[] = [
-  { caseId: "case-01", src: "/demo/cases/case-01/cover.jpg", depth: 1.8, x: 10, y: 27, w: 230, h: 290, rotate: -7, mobile: true },
-  { src: "/home-floating/cap.png", depth: 0.6, x: 29, y: 14, w: 120, rotate: 6, far: true },
-  { src: "/home-floating/mug.png", depth: 1, x: 70, y: 13, w: 140, rotate: 5 },
-  { caseId: "case-04", src: "/demo/cases/case-04/cover.jpg", depth: 1.5, x: 89, y: 30, w: 210, h: 260, rotate: 6, mobile: true },
-  { src: "/home-floating/tote.png", depth: 1.1, x: 12, y: 76, w: 170, rotate: -5 },
-  { src: "/home-floating/tumbler.png", depth: 0.8, x: 31, y: 85, w: 120, rotate: -6, far: true },
-  { caseId: "case-02", src: "/demo/cases/case-02/cover.jpg", depth: 1.2, x: 72, y: 82, w: 180, h: 220, rotate: -4 },
-  { src: "/home-floating/notebook.png", depth: 0.9, x: 91, y: 75, w: 150, rotate: 7 },
+  { caseId: "case-02", src: "/demo/cases/case-02/cover.jpg", depth: 1.8, x: 10, y: 27, w: 230, h: 290, rotate: -7, mobile: true },
+  { caseId: "case-08", src: "/demo/cases/case-08/cover.jpg", depth: 0.6, x: 29, y: 14, w: 120, h: 150, rotate: 6, far: true },
+  { caseId: "case-15", src: "/demo/cases/case-15/cover.jpg", depth: 1, x: 70, y: 13, w: 140, h: 175, rotate: 5 },
+  { caseId: "case-05", src: "/demo/cases/case-05/cover.jpg", depth: 1.5, x: 89, y: 30, w: 210, h: 260, rotate: 6, mobile: true },
+  { caseId: "case-18", src: "/demo/cases/case-18/cover.jpg", depth: 1.1, x: 12, y: 76, w: 170, h: 212, rotate: -5 },
+  { caseId: "case-01", src: "/demo/cases/case-01/cover.jpg", depth: 0.8, x: 31, y: 85, w: 120, h: 150, rotate: -6, far: true },
+  { caseId: "case-23", src: "/demo/cases/case-23/cover.jpg", depth: 1.2, x: 72, y: 82, w: 180, h: 220, rotate: -4 },
+  { caseId: "case-29", src: "/demo/cases/case-29/cover.jpg", depth: 0.9, x: 91, y: 75, w: 150, h: 188, rotate: 7 },
 ]
 
 function HeroCaseCard({ caseId, width, height, onOpen }: { caseId: string; width: string; height: string; onOpen: (id: string) => void }) {

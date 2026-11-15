@@ -1,11 +1,10 @@
-export type BrandId =
-  | "estee-lauder"
-  | "la-mer"
-  | "mac"
-  | "clinique"
-  | "jo-malone-london"
+export type BrandId = string
 
 export type OccasionId = "lunar-new-year" | "holiday" | "vip" | "launch" | "employee"
+
+export const THEME_LABELS = ["Minimal", "Retro", "Playful", "Christmas", "Collaboration"] as const
+
+export type ThemeLabel = (typeof THEME_LABELS)[number]
 
 export type HomeChipId =
   | "collab"
@@ -33,24 +32,25 @@ type ProductBase = {
   id: string
   name: string
   brands: BrandId[]
-  category: CategoryId
+  category?: CategoryId
   occasions: OccasionId[]
-  year: number
+  year?: number
   images: string[]
   inspiration?: string
-  material: string
-  packaging: string
-  size: string
-  priceTiers: PriceTier[]
-  clicks: number
+  material?: string
+  packaging?: string
+  size?: string
+  priceTiers?: PriceTier[]
+  clicks?: number
   featured?: boolean
+  theme?: string
+  notes?: string
 }
 
 export type ArchiveProduct = ProductBase & {
   source: "archive"
-  campaign: string
-  regions: Region[]
-  notes: string
+  campaign?: string
+  regions?: Region[]
 }
 
 export type ExternalProduct = ProductBase & {
@@ -60,7 +60,17 @@ export type ExternalProduct = ProductBase & {
 
 export type Product = ArchiveProduct | ExternalProduct
 
-export type CaseItem = { name: string; spec: string; image: string; productId?: string }
+export type AccessoryImageKind = "isolated" | "set-reference" | "context"
+
+export const ACCESSORY_SET_REFERENCE_LABEL = "Set reference"
+
+export type CaseItem = {
+  name: string
+  spec?: string
+  image?: string
+  imageKind?: AccessoryImageKind
+  productId?: string
+}
 
 export type Case = {
   id: string
@@ -68,33 +78,31 @@ export type Case = {
   client: string
   kind: "elc" | "industry" | "ip"
   occasions: OccasionId[]
-  year: number
-  region: Region
+  year?: number
+  region?: Region
   cover: string
   coverAspect: "3/4" | "4/5" | "1/1" | "4/3"
   images: string[]
-  description: string
-  takeaway: string
+  description?: string
+  takeaway?: string
   items: CaseItem[]
   featured?: boolean
   chips: HomeChipId[]
+  theme?: ThemeLabel
 }
-
-export type RankingMetric = "searchHeat" | "caseClicks" | "purchaseVolume"
 
 export type RankingItem = {
   id: string
   name: string
   image: string
-  productId?: string
-  metrics: Record<RankingMetric, number>
-  searchHeatPrevRank: number | null
+  caseId: string
+  theme?: string
+  notes?: string
 }
 
 export type RankingBoard = {
-  id: "drinkware" | "home-scent"
+  id: string
   label: string
-  period: string
   items: RankingItem[]
 }
 

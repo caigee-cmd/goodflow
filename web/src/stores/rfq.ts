@@ -6,7 +6,7 @@ import { brand } from "@/config/brand"
 import { product } from "@/data"
 import type { RfqHistoryItem } from "@/data/estee-lauder/rfq-history"
 import { fmtDate } from "@/lib/dates"
-import { tierFor } from "@/lib/pricing"
+import { minQty, tierFor } from "@/lib/pricing"
 import type { Region, RfqLine, ShippingTerms } from "@/lib/types"
 
 type RfqState = {
@@ -52,7 +52,7 @@ export const useRfq = create<RfqState>()(
             }
             lines.push({
               productId: id,
-              qty: product(id).priceTiers[0].moq,
+              qty: minQty(product(id)),
               terms: "EXW",
               selected: true,
               addedAt: Date.now(),
@@ -91,7 +91,7 @@ export const useRfq = create<RfqState>()(
             return {
               name: current.name,
               qty: line.qty,
-              unitPrice: tier.unitPrice,
+              ...(tier ? { unitPrice: tier.unitPrice } : {}),
               terms: line.terms,
             }
           }),
@@ -131,12 +131,12 @@ export const useRfq = create<RfqState>()(
 
 export function rfqSummary(lines: RfqLine[]) {
   const selected = lines.filter((line) => line.selected)
-  const leads = selected.map((line) => ({
-    days: product(line.productId).priceTiers.find((tier) => line.qty >= tier.moq)?.leadTimeDays ?? 0,
-    productId: line.productId,
-    name: product(line.productId).name,
-  }))
-  const longest = [...leads].sort((a, b) => b.days - a.days)[0]
+  const leads = selected.flatMap((line) => {
+    const item = product(line.productId)
+    const days = tierFor(item, line.qty)?.leadTimeDays
+    return days == null ? [] : [{ days, productId: line.productId, name: item.name }]
+  })
+  const longest = leads.length ? [...leads].sort((a, b) => b.days - a.days)[0] : undefined
   return {
     count: selected.length,
     totalQty: selected.reduce((sum, line) => sum + line.qty, 0),

@@ -2,12 +2,10 @@
 
 import { useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
-import { DRINKWARE, METRICS } from "@/data"
-import type { RankingItem, RankingMetric } from "@/lib/types"
+import { RANKING } from "@/data"
 import { cn } from "@/lib/utils"
 import { RankingSkeleton } from "@/components/ui/skeleton"
-import { NumberTicker } from "./number-ticker"
-import { ProductDialog } from "@/components/products/product-dialog"
+import { CaseDialog } from "@/components/cases/case-dialog"
 import { PlaceholderCup } from "./placeholder-cup"
 
 const SPRING = { type: "spring" as const, stiffness: 260, damping: 30 }
@@ -24,22 +22,12 @@ function slotFor(rank: number, width: number): Slot {
   return { x: index * column, y: 640, width: column - 16, rotate: 0, z: 1 }
 }
 
-function delta(item: RankingItem, rank: number) {
-  if (item.searchHeatPrevRank == null) return { label: "NEW", tone: "text-el-gold-deep" }
-  const change = item.searchHeatPrevRank - rank
-  if (change > 0) return { label: `▲ ${change}`, tone: "text-el-gold-deep" }
-  if (change < 0) return { label: `▼ ${Math.abs(change)}`, tone: "text-el-taupe" }
-  return { label: "=", tone: "text-el-taupe-ink" }
-}
-
-export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?: RankingMetric }) {
+export function RankingBoard() {
   const stage = useRef<HTMLDivElement>(null)
   const [width, setWidth] = useState(0)
-  const [metric, setMetric] = useState<RankingMetric>(initialMetric)
   const [hovered, setHovered] = useState<string | null>(null)
-  const [productId, setProductId] = useState<string | null>(null)
-  const unit = METRICS.find((entry) => entry.id === metric)!.unit
-  const ranked = [...DRINKWARE.items].sort((a, b) => b.metrics[metric] - a.metrics[metric])
+  const [caseId, setCaseId] = useState<string | null>(null)
+  const ranked = RANKING.items
   const rankOf = new Map(ranked.map((item, index) => [item.id, index + 1]))
 
   useEffect(() => {
@@ -52,49 +40,15 @@ export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?:
     return () => observer.disconnect()
   }, [])
 
-  useEffect(() => {
-    const url = new URL(window.location.href)
-    if (url.searchParams.get("metric") === metric) return
-    url.searchParams.set("metric", metric)
-    window.history.replaceState(null, "", url)
-  }, [metric])
-
   return (
     <div>
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div>
           <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
-            GoodFlow public data · {DRINKWARE.period}
+            Curated cases
           </p>
           <h1 className="mt-2 font-heading text-[40px] leading-[48px] font-normal">Ranking</h1>
-          <p className="mt-2 text-[16px] leading-6 text-el-taupe-ink">{DRINKWARE.label} · This season</p>
-        </div>
-        <div className="flex h-10 rounded-md border border-el-line bg-el-paper p-0.5" role="tablist" aria-label="Metric">
-          {METRICS.map((entry) => {
-            const selected = entry.id === metric
-            return (
-              <button
-                key={entry.id}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                onClick={() => setMetric(entry.id)}
-                className={cn(
-                  "relative rounded-[5px] px-4 text-[12px] font-semibold tracking-[0.1em] uppercase",
-                  selected ? "text-el-ivory" : "text-el-taupe-ink",
-                )}
-              >
-                {selected ? (
-                  <motion.span
-                    layoutId="metric-pill"
-                    className="absolute inset-0 rounded-[5px] bg-el-black"
-                    transition={SPRING}
-                  />
-                ) : null}
-                <span className="relative">{entry.label}</span>
-              </button>
-            )
-          })}
+          <p className="mt-2 text-[16px] leading-6 text-el-taupe-ink">{RANKING.label} · Editorial order</p>
         </div>
       </div>
 
@@ -110,26 +64,24 @@ export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?:
         />
         {width === 0 ? <RankingSkeleton /> : null}
         {width > 0
-          ? DRINKWARE.items.map((item) => {
+          ? ranked.map((item) => {
               const rank = rankOf.get(item.id) ?? 10
               const slot = slotFor(rank, width)
               const large = rank <= 3
               const hot = hovered === item.id
-              const change = delta(item, rank)
               return (
                 <motion.article
                   key={item.id}
-                  role={item.productId ? "button" : undefined}
-                  tabIndex={item.productId ? 0 : undefined}
-                  onClick={() => item.productId && setProductId(item.productId)}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setCaseId(item.caseId)}
                   onKeyDown={(event) => {
-                    if (!item.productId) return
                     if (event.key === "Enter" || event.key === " ") {
                       event.preventDefault()
-                      setProductId(item.productId)
+                      setCaseId(item.caseId)
                     }
                   }}
-                  className={item.productId ? "absolute top-0 left-0 cursor-pointer" : "absolute top-0 left-0"}
+                  className="absolute top-0 left-0 cursor-pointer"
                   initial={false}
                   animate={{
                     x: slot.x,
@@ -169,20 +121,10 @@ export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?:
                   <p className={cn("mt-2", large ? "text-[14px] leading-[22px]" : "line-clamp-2 text-[13px] leading-[18px]")}>
                     {item.name}
                   </p>
-                  <p className={cn("mt-1", large ? "text-[20px] leading-6" : "text-[13px] leading-[18px]")}>
-                    {large ? (
-                      <NumberTicker key={`${item.id}-${metric}`} value={item.metrics[metric]} />
-                    ) : (
-                      <span className="tabular-nums">{item.metrics[metric].toLocaleString("en-US")}</span>
-                    )}
-                    {large ? (
-                      <span className="ml-2 align-middle text-[11px] tracking-[0.14em] text-el-taupe-ink uppercase">
-                        {unit}
-                      </span>
-                    ) : null}
-                  </p>
-                  {large && metric === "searchHeat" ? (
-                    <p className={cn("mt-1 text-[12px] leading-[18px] font-medium", change.tone)}>{change.label}</p>
+                  {item.theme ? (
+                    <p className={cn("mt-1 text-el-taupe-ink", large ? "text-[13px] leading-5" : "text-[12px] leading-[18px]")}>
+                      {item.theme}
+                    </p>
                   ) : null}
                 </motion.article>
               )
@@ -191,9 +133,9 @@ export function RankingBoard({ initialMetric = "searchHeat" }: { initialMetric?:
       </div>
 
       <p className="text-[12px] leading-[18px] text-el-taupe-ink">
-        Based on GoodFlow public & anonymized data ({DRINKWARE.period}). No xBeauty internal data is used.
+        A curated shortlist of highlighted campaign cases, shown in editorial order. No popularity metrics are used.
       </p>
-      {productId ? <ProductDialog id={productId} onClose={() => setProductId(null)} /> : null}
+      {caseId ? <CaseDialog key={caseId} id={caseId} onClose={() => setCaseId(null)} /> : null}
     </div>
   )
 }

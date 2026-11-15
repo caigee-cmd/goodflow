@@ -1,9 +1,10 @@
 import { CASES } from "./estee-lauder/cases"
 import { BRANDS, CATEGORIES, HOME_CHIPS, OCCASIONS, PRICE_OPTIONS } from "./estee-lauder/dictionaries"
+import { HOME_GALLERY_CHIPS, THEME_LABELS } from "./estee-lauder/themes"
 import { PRODUCTS } from "./estee-lauder/products"
-import { DRINKWARE, METRICS, TRENDING_SEARCHES } from "./estee-lauder/ranking"
+import { RANKING } from "./estee-lauder/ranking"
 
-export { BRANDS, CATEGORIES, HOME_CHIPS, OCCASIONS, PRICE_OPTIONS, PRODUCTS, CASES, DRINKWARE, METRICS, TRENDING_SEARCHES }
+export { BRANDS, CATEGORIES, HOME_CHIPS, OCCASIONS, PRICE_OPTIONS, PRODUCTS, CASES, RANKING, HOME_GALLERY_CHIPS, THEME_LABELS }
 
 export function product(id: string) {
   const found = PRODUCTS.find((item) => item.id === id)
