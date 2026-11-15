@@ -2,6 +2,10 @@ export type BrandId = string
 
 export type OccasionId = "lunar-new-year" | "holiday" | "vip" | "launch" | "employee"
 
+export const THEME_LABELS = ["Minimal", "Retro", "Playful", "Christmas", "Collaboration"] as const
+
+export type ThemeLabel = (typeof THEME_LABELS)[number]
+
 export type HomeChipId =
   | "collab"
   | "elevated"
@@ -84,6 +88,7 @@ export type Case = {
   items: CaseItem[]
   featured?: boolean
   chips: HomeChipId[]
+  theme?: ThemeLabel
 }
 
 export type RankingItem = {

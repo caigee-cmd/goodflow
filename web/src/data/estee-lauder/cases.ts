@@ -19,6 +19,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["heritage", "elevated"],
+    theme: "Christmas",
     description: "Inspired by Hollywood glamour, Charlotte Tilbury’s 2026 Christmas gift set pairs red and gold packaging with jewel-like drawer handles, revealing makeup, skincare and exclusive accessories. A Pillow Talk mini makeup bag and a white quartz lip-shaped gua sha reflect the brand’s signature aesthetic, extending the gifting experience into everyday storage and self-care.",
     takeaway: "Inspired by Hollywood glamour, Charlotte Tilbury’s 2026 Christmas gift set pairs red and gold packaging with jewel-like drawer handles, revealing makeup, skincare and exclusive accessories.",
     items: [
@@ -46,6 +47,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["heritage", "elevated"],
+    theme: "Christmas",
     description: "Dior’s 2026 holiday advent calendar reimagines the iconic Dior star with architectural details inspired by 30 Avenue Montaigne. White-and-gold packaging frames a gingerbread-inspired miniature scene featuring a couture gown. Numbered drawers reveal fragrances, makeup, skincare, and lifestyle treasures, turning the countdown to Christmas into a daily ritual of discovery.",
     takeaway: "Dior’s 2026 holiday advent calendar reimagines the iconic Dior star with architectural details inspired by 30 Avenue Montaigne.",
     items: [
@@ -75,6 +77,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["heritage", "elevated"],
+    theme: "Christmas",
     description: "Lamer’s 2026 Christmas collection transforms gift boxes into ships filled with surprises, painting starry skies and ocean scenes in deep navy, emerald green and gold. Opening the lids reveals dimensional ships and character scenes, with skincare treasures waiting to be discovered. Collectible blind box charms add another element of surprise, offering a keepsake from the festive voyage.",
     takeaway: "Lamer’s 2026 Christmas collection transforms gift boxes into ships filled with surprises, painting starry skies and ocean scenes in deep navy, emerald green and gold.",
     items: [
@@ -100,6 +103,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["heritage", "elevated"],
+    theme: "Christmas",
     items: [],
   },
   {
@@ -119,6 +123,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["heritage", "elevated"],
+    theme: "Christmas",
     description: "The YSL 2026 holiday gift set pairs rich burgundy with gold accents, transforming a Christmas tree silhouette into a layered gift-box design. Numbered drawers hold fragrance, makeup, and skincare treasures, complemented by practical accessories such as a hair clip and compact mirror. A limited-edition gift bag and message card complete the festive gifting experience.",
     takeaway: "The YSL 2026 holiday gift set pairs rich burgundy with gold accents, transforming a Christmas tree silhouette into a layered gift-box design.",
     items: [
@@ -143,6 +148,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-06/03.jpg",
     ],
     chips: ["heritage"],
+    theme: "Christmas",
     description: "Beast’s 2025 Christmas collection brings “Fruitiverse Adventure” to life with Captain Snow Monster, planets and gemstone motifs across gift boxes and fragrance accessories. A board-game advent calendar invites recipients to explore step by step, while scented candles and tasselled fragrance ornaments offer surprises along the way. Fragrance, play and festive decoration come together to tell the story of this interstellar adventure.",
     takeaway: "Beast’s 2025 Christmas collection brings “Fruitiverse Adventure” to life with Captain Snow Monster, planets and gemstone motifs across gift boxes and fragrance accessories.",
     items: [
@@ -167,6 +173,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-07/03.jpg",
     ],
     chips: ["everyday"],
+    theme: "Retro",
     description: "Amuse introduces the Soup Core Edition, themed around a warm and cozy atmosphere. Alongside makeup products like the lip glaze and the cushion, this collection also features gift-with-purchase promotions: receive a complimentary hair claw clip with any purchase of two items, and a free reusable straw cup with a single purchase reaching a certain amount. This winter, savor your exclusive healing moments with Amuse.",
     takeaway: "Amuse introduces the Soup Core Edition, themed around a warm and cozy atmosphere.",
     items: [
@@ -190,6 +197,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["heritage", "elevated"],
+    theme: "Retro",
     description: "Chanel launches a new collection inspired by denim style. This collection includes the four-color eyeshadow palette, the highlighter palette, the hand cream, the lipstick and other products. Complimentary pouches accompany purchases, offering storage for the hand cream and palettes. Embellished with embroidered brand logos, the pouches combine denim’s casual appeal with CHANEL’s signature refinement, making them ideal for everyday storage and use on the go.",
     takeaway: "Chanel launches a new collection inspired by denim style. This collection includes the four-color eyeshadow palette, the highlighter palette, the hand cream, the lipstick and other products.",
     items: [
@@ -215,6 +223,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-09/05.jpg",
     ],
     chips: ["elevated"],
+    theme: "Retro",
     description: "Fakeme celebrates Qixi with its “A LETTER TO ME” gift box, turning the sentiment of the occasion into a romantic letter to oneself. Centered around sunglasses, the set includes complimentary eyewear pouches, a handheld mirror, and a square scarf. Pink envelope details echo the letter-writing theme, while metallic silver and soft pink tones complement one another, adding a sense of occasion to Qixi gifting and self-treating.",
     takeaway: "Fakeme celebrates Qixi with its “A LETTER TO ME” gift box, turning the sentiment of the occasion into a romantic letter to oneself.",
     items: [
@@ -240,6 +249,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-10/05.jpg",
     ],
     chips: ["collab", "heritage"],
+    theme: "Retro",
     description: "Sephora has teamed up with Goodbai Goodees to present the Star Denim Collaboration Collection. The collection features makeup items such as the eyeshadow palette, the lipstick, the cushion, complete with exclusive shells and accessories, bringing a touch of light denim blue to summer looks and makeup. Additionally, an adorable portable denim bag and a charm have made their debut to accompany your daily life.",
     takeaway: "Sephora has teamed up with Goodbai Goodees to present the Star Denim Collaboration Collection.",
     items: [
@@ -266,6 +276,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-11/04.jpg",
     ],
     chips: ["everyday", "heritage"],
+    theme: "Retro",
     description: "Songmont's lattice bucket bag makes a fall/winter debut with an exclusive new colorway. The brand interweaves the structured, rich finish of vegetable-tanned leather with the soft, warm touch of nubuck, showcasing a premium texture in every detail. Continuing the hand-woven craftsmanship, every interlace is meticulously completed by hand, giving the bag an artisanal, breathable feel. Additionally, a complimentary bag charm is included, adding a uniquely distinctive touch to the overall design.",
     takeaway: "Songmont's lattice bucket bag makes a fall/winter debut with an exclusive new colorway.",
     items: [
@@ -287,6 +298,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-12/03.jpg",
     ],
     chips: ["everyday"],
+    theme: "Minimal",
     description: "ALO introduces a bordeaux-red bag collection, bringing minimalist elegance to everyday outings. Soft gathers, a drawstring closure, and a branded tag give the bag a relaxed yet refined feel. The collection also includes a hair claw clip, a scrunchie, a pair of sunglasses, a cardholder, and a facial mist, balancing style with everyday practicality and adding effortless sophistication to casual outings and daily commutes.",
     takeaway: "ALO introduces a bordeaux-red bag collection, bringing minimalist elegance to everyday outings.",
     items: [
@@ -313,6 +325,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-13/04.jpg",
     ],
     chips: ["everyday"],
+    theme: "Minimal",
     description: "Blue Bottle introduces a Christmas limited-edition collection in winter pine green, bringing an understated touch of seasonal warmth. Featuring the holiday mug, ceramic mug, and insulated tumblers, the collection pairs minimalist design with a refined feel—perfect for everyday use or thoughtful gifting.",
     takeaway: "Blue Bottle introduces a Christmas limited-edition collection in winter pine green, bringing an understated touch of seasonal warmth.",
     items: [
@@ -337,6 +350,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-14/04.jpg",
     ],
     chips: ["everyday", "collab"],
+    theme: "Minimal",
     description: "This scented candle collection brings Hirono’s soothing spirit into everyday fragrance. Each candle is housed in a square white ceramic vessel, with a sculptural Hirono figure adorning the lid for a refined, tactile finish. Available in four scents—TIDE, GLOWING STONE, ANNUAL RING, and BLOOM—the collection brings a sense of calm and comforting companionship to everyday spaces.",
     takeaway: "This scented candle collection brings Hirono’s soothing spirit into everyday fragrance. Each candle is housed in a square white ceramic vessel, with a sculptural Hirono figure adorning the lid for a refined, tactile finish.",
     items: [
@@ -360,6 +374,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["elevated"],
+    theme: "Minimal",
     description: "The new products of Prada have been launched, along with the PR gift box used for promotional purposes. Presented in soft lilac, the gift box features a fragrance in Prada’s signature triangular bottle, a lipstick, a brand-customized film camera and film stickers. Subtle textures and minimalist design lend the set a refined feel. Pairing fragrance with the distinctive charm of film photography, it invites recipients to experience the present through scent and capture the many facets of themselves through the lens.",
     takeaway: "The new products of Prada have been launched, along with the PR gift box used for promotional purposes.",
     items: [
@@ -384,6 +399,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-16/04.jpg",
     ],
     chips: ["elevated"],
+    theme: "Minimal",
     description: "This set combines style with everyday practicality. It includes a pink mini bag, a matte bouncy blush, a liquid blush, and a lip gloss. The bag is lightweight, soft and comes with a zipper, making it an adorable portable storage bag. This entire set of products not only meets the needs of regular on-the-go makeup application, but also helps create a natural and harmonious makeup look with the same color for the lips and cheeks.",
     takeaway: "This set combines style with everyday practicality. It includes a pink mini bag, a matte bouncy blush, a liquid blush, and a lip gloss.",
     items: [
@@ -406,6 +422,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-17/04.jpg",
     ],
     chips: ["everyday", "elevated"],
+    theme: "Minimal",
     description: "Rhode Spring Limited Edition. The brand integrates the lip gloss storage into the phone case, offering both an all-in-one phone case and a detachable magnetic version. A contoured holder keeps the lip gloss within easy reach for touch-ups on the go. Coordinated colors combine practicality with style, adding a fresh touch to spring outings.",
     takeaway: "Rhode Spring Limited Edition. The brand integrates the lip gloss storage into the phone case, offering both an all-in-one phone case and a detachable magnetic version.",
     items: [
@@ -430,6 +447,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["collab", "elevated"],
+    theme: "Playful",
     description: "3CE has teamed up with Mikshimai to unveil a playful summer collaboration collection. Not only are the makeup products dressed in eye-catching candy-inspired packaging, but the set also comes with super fun accessories: uniquely shaped rings and a pearl beaded bracelet. Wear the makeup on your face and the candy on your hands to unlock your summer dopamine!",
     takeaway: "3CE has teamed up with Mikshimai to unveil a playful summer collaboration collection.",
     items: [
@@ -452,6 +470,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-19/04.jpg",
     ],
     chips: ["collab"],
+    theme: "Playful",
     description: "A miniature game console filled with cheek colour, a ring concealing lip balm, a beauty capsule waiting to be opened—AMUSE reimagines Monchhichi through the familiar forms of vintage toys. Bright colours, transparent cases and character portraits define the collection, while hair clips, fringe holders and photo keyrings add more pieces to discover and collect.",
     takeaway: "A miniature game console filled with cheek colour, a ring concealing lip balm, a beauty capsule waiting to be opened—AMUSE reimagines Monchhichi through the familiar forms of vintage toys.",
     items: [
@@ -479,6 +498,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-20/05.jpg",
     ],
     chips: ["elevated"],
+    theme: "Playful",
     description: "Inspired by the sorceress Circe, Little Ondine’s Witch’s Trick makeup gift set creates a mysterious theatrical atmosphere through its tent-shaped box, contrasting red and blue tones, and starburst motifs. Hat-shaped lip tints and wand-inspired multipurpose pencils coordinate with themed accessories, including an umbrella, passport holder, chain and blanket. Unboxing becomes the opening act of a magic show, inviting discovery and making the set a distinctive collectible.",
     takeaway: "Inspired by the sorceress Circe, Little Ondine’s Witch’s Trick makeup gift set creates a mysterious theatrical atmosphere through its tent-shaped box, contrasting red and blue tones, and starburst motifs.",
     items: [
@@ -512,6 +532,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-21/11.jpg",
     ],
     chips: ["collab"],
+    theme: "Playful",
     description: "The Peaceminusone × Zo&Friends collection combines signature daisies with ZOA’s flower-shaped footprints across plush toys, bags, charms and home accessories. A black-and-white palette accented with mint green unifies the range, with ZOA dressed in a black hoodie taking centre stage. Blending streetwear style with character-driven design, the collection brings its distinctive identity into everyday outfits, travel and living spaces.",
     takeaway: "The Peaceminusone × Zo&Friends collection combines signature daisies with ZOA’s flower-shaped footprints across plush toys, bags, charms and home accessories.",
     items: [
@@ -538,6 +559,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-22/02.jpg",
     ],
     chips: ["elevated", "collab"],
+    theme: "Playful",
     description: "rom&nd’s 10th anniversary collection celebrates “Dear Bestie,” thanking its community through a birthday-party theme. Limited-edition lip tints, 20-shade eyeshadow palettes and cake-box packaging set the celebratory mood, while an in-person heart-shaped mirror DIY experience invites personal creativity. Together, the makeup and customisable accessories create a personal keepsake of the anniversary.",
     takeaway: "rom&nd’s 10th anniversary collection celebrates “Dear Bestie,” thanking its community through a birthday-party theme.",
     items: [
@@ -563,6 +585,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["collab", "elevated"],
+    theme: "Playful",
     description: "The SK-II × Crybaby collaboration gift box makes its debut for the Qixi Festival season. Centered around the brand's iconic Facial Treatment Essence, the bottle features an exclusive Crybaby limited-edition design. The gift box includes a limited-edition Crybaby figurine, which can be DIY-ed as a bottle cap decoration, adding a touch of playful companionship to every skincare routine. It also comes with co-branded accessories such as a sunglasses clip, a hair clip, and a hairband, extending the healing vibes into the details of everyday life.",
     takeaway: "The SK-II × Crybaby collaboration gift box makes its debut for the Qixi Festival season.",
     items: [
@@ -590,6 +613,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-24/06.jpg",
     ],
     chips: ["collab"],
+    theme: "Collaboration",
     description: "HBN marks its seventh anniversary with a music-inspired gift collection featuring SILENCE WANG. Soft pink tones and golden clock markings frame the singer’s portraits and musical motifs across the packaging and accessories. Collectible photo cards, a commemorative album and bag charms each capture a moment to keep, while a tap of the NFC voice card adds a familiar voice to the collection.",
     takeaway: "HBN marks its seventh anniversary with a music-inspired gift collection featuring SILENCE WANG.",
     items: [
@@ -617,6 +641,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-25/03.jpg",
     ],
     chips: ["collab"],
+    theme: "Collaboration",
     description: "Korean fragrance brand Huxley partners with the lovable Monchhichi for a limited-edition holiday collection, pairing scented hand cream with a Monchhichi-print drawstring pouch. Rich red tones and playful character motifs create a festive mood. Extending from product packaging to on-the-go storage, the collaboration brings warmth and whimsy to everyday care and holiday gifting.",
     takeaway: "Korean fragrance brand Huxley partners with the lovable Monchhichi for a limited-edition holiday collection, pairing scented hand cream with a Monchhichi-print drawstring pouch.",
     items: [
@@ -642,6 +667,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-26/06.jpg",
     ],
     chips: ["collab"],
+    theme: "Collaboration",
     description: "SkinCeuticals’ “Little Silver Umbrella” sunscreen collaboration with fiiijuju brings sun-care themes and the character’s soft, rounded silhouette to limited-edition packaging and accessories. A light blue palette and character illustrations connect the canvas tote, hair clips, stickers, and storybook, adding a gentle, uplifting touch to daily sun care and summer outings.",
     takeaway: "SkinCeuticals’ “Little Silver Umbrella” sunscreen collaboration with fiiijuju brings sun-care themes and the character’s soft, rounded silhouette to limited-edition packaging and accessories.",
     items: [
@@ -672,6 +698,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["collab"],
+    theme: "Collaboration",
     description: "The Kiehl’s × YUQI ambassador gift set captures campus style through a collection of denim-blue accessories. A shoulder bag, heart-shaped coin purse and pencil case complement relaxed collegiate looks, while a journal, photo cards and badges offer space for memories and collecting. Stars and YUQI’s portraits complete the design, creating a back-to-school gift for fans filled with a sense of companionship and new beginnings.",
     takeaway: "The Kiehl’s × YUQI ambassador gift set captures campus style through a collection of denim-blue accessories.",
     items: [
@@ -699,6 +726,7 @@ const CASES_SOURCE: Case[] = [
       "/demo/cases/case-28/03.jpg",
     ],
     chips: ["collab"],
+    theme: "Collaboration",
     description: "The Chando × yuy Limited-Edition Renewal Gift Set pairs Himalayan Essence with character-themed accessories, bringing skincare and illustration together. The red heart-shaped box features birds, stamp-style artwork and a blue scalloped border. A scrunchie, keyring and stickers capture the character’s different expressions, filling the gift with thoughtful details and little discoveries.",
     takeaway: "The Chando × yuy Limited-Edition Renewal Gift Set pairs Himalayan Essence with character-themed accessories, bringing skincare and illustration together.",
     items: [
@@ -725,6 +753,7 @@ const CASES_SOURCE: Case[] = [
     ],
     featured: true,
     chips: ["collab"],
+    theme: "Collaboration",
     description: "Freeplus joins Hello Kitty in a collection featuring light blue gingham and bow motifs across packaging and accessories. Character details appear on small pouches, scrunchies, and drawstring bags, bringing the brand’s fresh aesthetic into everyday life. A consistent palette and character design create a clear connection between the brand and Hello Kitty. Practical, playful accessories offer more opportunities for the brand to become part of everyday storage and styling routines.",
     takeaway: "Freeplus joins Hello Kitty in a collection featuring light blue gingham and bow motifs across packaging and accessories.",
     items: [
