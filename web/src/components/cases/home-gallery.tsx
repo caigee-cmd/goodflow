@@ -51,6 +51,9 @@ function CaseCard({ item, onOpen }: { item: Case; onOpen: (id: string) => void }
         <p className="font-heading line-clamp-2 text-[18px] leading-6 font-medium tracking-[0.04em] uppercase">
           {item.title.replace(/[.]+$/g, "")}
         </p>
+        {item.takeaway ? (
+          <p className="mt-1 line-clamp-3 text-[13px] leading-5 text-el-taupe-ink">{item.takeaway}</p>
+        ) : null}
       </button>
       <div className="relative">
         <button type="button" onClick={() => onOpen(item.id)} aria-label={item.title} className="block w-full">

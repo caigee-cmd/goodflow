@@ -16,17 +16,16 @@ describe("trend catalog", () => {
     expect(PRODUCTS.map((item) => item.id)).toEqual(Array.from({ length: 29 }, (_, i) => `ext-${String(i + 1).padStart(3, "0")}`))
   })
 
-  it("does not invent commercial fields", () => {
+  it("does not invent commercial prices or sizes", () => {
     expect(PRODUCTS.every((item) => !hasPricing(item))).toBe(true)
-    expect(PRODUCTS.every((item) => !item.material && !item.packaging && !item.size && !item.category)).toBe(true)
-    expect(CASES.every((item) => !item.description && !item.takeaway && item.items.length === 0)).toBe(true)
+    expect(PRODUCTS.every((item) => !item.size && !item.category)).toBe(true)
   })
 
   it("keeps known campaign facts", () => {
-    expect(p("ext-001").name).toBe("Charlotte Tilbury2026圣诞礼盒")
+    expect(p("ext-001").name).toBe("Charlotte Tilbury’s Festive Accessories Meet Hollywood Glamour")
     expect(p("ext-001").brands).toEqual(["charlotte-tilbury"])
-    expect(p("ext-002").name).toBe("Dior Holiday limited Collection 2026")
-    expect(p("ext-023").name).toBe("SK-II×CRY BABY 联名系列")
+    expect(p("ext-002").name).toBe("Dior’s Star-Shaped Calendar Reveals Festive Treasures")
+    expect(p("ext-023").name).toContain("SK-II")
     expect(CASES[0].year).toBe(2026)
     expect(CASES[0].occasions).toEqual(["holiday"])
     expect(CASES.filter((item) => item.occasions.includes("holiday")).length).toBeGreaterThanOrEqual(6)
@@ -89,8 +88,8 @@ describe("trend catalog", () => {
     })
     expect(email.to).toBe("sales@goodflow.example")
     expect(email.subject).toBe("RFQ — Holiday 2026 gifting — 4 items")
-    expect(email.body).toContain("Charlotte Tilbury2026圣诞礼盒")
-    expect(email.body).toContain("Dior Holiday limited Collection 2026")
+    expect(email.body).toContain("Charlotte Tilbury’s Festive Accessories Meet Hollywood Glamour")
+    expect(email.body).toContain("Dior’s Star-Shaped Calendar Reveals Festive Treasures")
     expect(email.body).not.toContain("Estimated total")
     expect(email.body).toContain("Please provide unit pricing, MOQ, and lead time")
     expect(email.body).toContain("Anna Chen")

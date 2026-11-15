@@ -84,11 +84,17 @@ export function CaseDialog({
               />
             ))}
           </div>
-          {item.description ? <p className="mt-6 max-w-[680px] text-[14px] leading-6">{item.description}</p> : null}
+          {item.description
+            ? item.description.split("\n\n").map((para) => (
+                <p key={para.slice(0, 48)} className="mt-6 max-w-[680px] text-[14px] leading-6 last:mb-0">
+                  {para}
+                </p>
+              ))
+            : null}
           {item.takeaway ? (
           <blockquote className="mt-6 border-l-2 border-el-gold bg-el-cream/50 p-4">
             <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
-              Why it worked
+              In short
             </p>
             <p className="mt-2 text-[14px] leading-6">{item.takeaway}</p>
           </blockquote>

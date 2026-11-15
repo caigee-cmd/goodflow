@@ -17,8 +17,12 @@ export function HomeSearch() {
   const results = useMemo(() => {
     if (q.length < 1) return { cases: [], products: [] }
     return {
-      cases: CASES.filter((item) => item.title.toLowerCase().includes(q) || item.client.toLowerCase().includes(q)).slice(0, 4),
-      products: PRODUCTS.filter((item) => item.name.toLowerCase().includes(q)).slice(0, 4),
+      cases: CASES.filter((item) =>
+        `${item.title} ${item.client} ${item.description ?? ""} ${item.takeaway ?? ""}`.toLowerCase().includes(q),
+      ).slice(0, 4),
+      products: PRODUCTS.filter((item) =>
+        `${item.name} ${item.notes ?? ""} ${item.inspiration ?? ""} ${item.material ?? ""} ${item.packaging ?? ""}`.toLowerCase().includes(q),
+      ).slice(0, 4),
     }
   }, [q])
 

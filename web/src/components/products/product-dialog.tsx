@@ -129,19 +129,18 @@ export function ProductDialog({
             {item.source === "archive" && item.campaign ? (
               <p className="mt-3 text-[14px] leading-[22px]">{item.campaign}</p>
             ) : null}
-            {item.source === "archive" && item.notes ? (
-              <blockquote className="mt-4 border-l-2 border-el-gold bg-el-cream p-4">
-                <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
-                  Archive note
-                </p>
-                <p className="mt-2 text-[14px] leading-6">{item.notes}</p>
-              </blockquote>
-            ) : null}
             {item.source === "external" ? (
               <p className="mt-3 text-[14px] leading-[22px] text-el-taupe-ink">
                 {[item.maker ? `By ${item.maker}` : "", item.theme].filter(Boolean).join(" · ")}
               </p>
             ) : null}
+            {item.notes
+              ? item.notes.split("\n\n").map((para) => (
+                  <p key={para.slice(0, 48)} className="mt-4 text-[14px] leading-6">
+                    {para}
+                  </p>
+                ))
+              : null}
 
             <dl className="mt-6 grid grid-cols-[140px_1fr] gap-y-3 text-[13px] leading-5">
               {[

@@ -248,6 +248,9 @@ export function CategoryBrowser({ query }: { query: string }) {
                   <button type="button" onClick={() => setOpenId(item.id)} className="mt-1 block w-full truncate text-left text-[15px] leading-[22px]">
                     {item.name}
                   </button>
+                  {item.notes ? (
+                    <p className="mt-1 line-clamp-2 text-[13px] leading-5 text-el-taupe-ink">{item.notes.split("\n\n")[0]}</p>
+                  ) : null}
                   {fromLabel(item) ? (
                   <p className="mt-1 text-[13px] leading-5 tabular-nums text-el-taupe-ink">{fromLabel(item)}</p>
                   ) : null}

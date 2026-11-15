@@ -40,13 +40,13 @@ type ProductBase = {
   clicks?: number
   featured?: boolean
   theme?: string
+  notes?: string
 }
 
 export type ArchiveProduct = ProductBase & {
   source: "archive"
   campaign?: string
   regions?: Region[]
-  notes?: string
 }
 
 export type ExternalProduct = ProductBase & {
@@ -82,6 +82,7 @@ export type RankingItem = {
   image: string
   caseId: string
   theme?: string
+  notes?: string
 }
 
 export type RankingBoard = {
