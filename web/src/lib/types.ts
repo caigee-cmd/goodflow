@@ -56,7 +56,17 @@ export type ExternalProduct = ProductBase & {
 
 export type Product = ArchiveProduct | ExternalProduct
 
-export type CaseItem = { name: string; spec?: string; image?: string; productId?: string }
+export type AccessoryImageKind = "isolated" | "set-reference" | "context"
+
+export const ACCESSORY_SET_REFERENCE_LABEL = "Set reference / 套装参考图"
+
+export type CaseItem = {
+  name: string
+  spec?: string
+  image?: string
+  imageKind?: AccessoryImageKind
+  productId?: string
+}
 
 export type Case = {
   id: string

@@ -1,6 +1,7 @@
 import type { Case } from "@/lib/types"
+import { withAccessoryImages } from "./accessory-images"
 
-export const CASES: Case[] = [
+const CASES_SOURCE: Case[] = [
   {
     id: "case-01",
     title: "Charlotte Tilbury’s Festive Accessories Meet Hollywood Glamour",
@@ -734,3 +735,5 @@ export const CASES: Case[] = [
     ],
   },
 ]
+
+export const CASES: Case[] = withAccessoryImages(CASES_SOURCE)

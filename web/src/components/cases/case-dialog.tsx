@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Heart, X } from "lucide-react"
 import { caseById } from "@/data"
+import { ACCESSORY_SET_REFERENCE_LABEL, type CaseItem } from "@/lib/types"
 import { occasionLabel } from "@/lib/catalog"
 import { ImageStage } from "@/components/media/image-stage"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
@@ -106,24 +107,13 @@ export function CaseDialog({
           <>
           <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">In this case</p>
           <div className="mt-4 grid grid-cols-2 gap-4 overflow-auto">
-            {item.items.map((piece) => {
-              const openable = Boolean(piece.productId)
-              return (
-                <button
-                  key={piece.name}
-                  type="button"
-                  disabled={!openable}
-                  onClick={() => piece.productId && setProductId(piece.productId)}
-                  className="rounded-md text-center enabled:hover:text-el-gold-deep focus-visible:outline-2 focus-visible:outline-el-gold disabled:cursor-default"
-                >
-                  <div className="mx-auto size-[88px] overflow-hidden rounded-full bg-el-cream">
-                    <PlaceholderImage label={piece.name} src={piece.image} className="text-[24px]" />
-                  </div>
-                  <p className="mt-2 text-[12px] leading-4 font-medium tracking-[0.04em] uppercase">{piece.name}</p>
-                  <p className="mt-1 text-[11px] leading-4 text-el-taupe-ink">{piece.spec}</p>
-                </button>
-              )
-            })}
+            {item.items.map((piece) => (
+              <AccessoryChip
+                key={piece.name}
+                piece={piece}
+                onOpenProduct={piece.productId ? setProductId : undefined}
+              />
+            ))}
           </div>
           </>
           ) : null}
@@ -146,4 +136,41 @@ export function CaseDialog({
         </button>
     </Modal>
   )
+}
+
+function AccessoryChip({
+  piece,
+  onOpenProduct,
+}: {
+  piece: CaseItem
+  onOpenProduct?: (id: string) => void
+}) {
+  const openable = Boolean(piece.productId && onOpenProduct)
+  const showSetReference = piece.imageKind === "set-reference" || piece.imageKind === "context"
+  const body = (
+    <>
+      <div className="mx-auto size-[88px] overflow-hidden rounded-full bg-el-cream">
+        <PlaceholderImage label={piece.name} src={piece.image} className="text-[24px]" />
+      </div>
+      <p className="mt-2 text-[12px] leading-4 font-medium tracking-[0.04em] uppercase">{piece.name}</p>
+      {piece.spec ? <p className="mt-1 text-[11px] leading-4 text-el-taupe-ink">{piece.spec}</p> : null}
+      {showSetReference ? (
+        <p className="mt-1 text-[10px] leading-4 text-el-taupe-ink">{ACCESSORY_SET_REFERENCE_LABEL}</p>
+      ) : null}
+    </>
+  )
+
+  if (openable && piece.productId) {
+    return (
+      <button
+        type="button"
+        onClick={() => onOpenProduct?.(piece.productId!)}
+        className="rounded-md text-center hover:text-el-gold-deep focus-visible:outline-2 focus-visible:outline-el-gold"
+      >
+        {body}
+      </button>
+    )
+  }
+
+  return <div className="rounded-md text-center">{body}</div>
 }
