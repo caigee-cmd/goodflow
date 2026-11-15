@@ -58,7 +58,7 @@ export type Product = ArchiveProduct | ExternalProduct
 
 export type AccessoryImageKind = "isolated" | "set-reference" | "context"
 
-export const ACCESSORY_SET_REFERENCE_LABEL = "Set reference / 套装参考图"
+export const ACCESSORY_SET_REFERENCE_LABEL = "Set reference"
 
 export type CaseItem = {
   name: string

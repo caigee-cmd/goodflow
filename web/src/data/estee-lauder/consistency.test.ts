@@ -72,6 +72,14 @@ describe("trend catalog", () => {
     expect(RANKING.items.every((item) => !("metrics" in item) && !("productId" in item))).toBe(true)
   })
 
+  it("shows English-only PDF theme names on products and ranking cards", () => {
+    const themes = ["Minimal", "Retro", "Playful", "Christmas", "Collaboration"] as const
+    expect(new Set(PRODUCTS.map((item) => item.theme))).toEqual(new Set(themes))
+    expect(new Set(RANKING.items.map((item) => item.theme))).toEqual(new Set(themes))
+    expect(PRODUCTS.every((item) => item.theme && /^[A-Za-z ]+$/.test(item.theme))).toBe(true)
+    expect(RANKING.items.every((item) => item.theme && /^[A-Za-z ]+$/.test(item.theme))).toBe(true)
+  })
+
   it("rfq email asks for a quote without invented totals", () => {
     const ids = ["ext-001", "ext-002", "ext-003", "ext-005"]
     const email = buildRfqEmail({

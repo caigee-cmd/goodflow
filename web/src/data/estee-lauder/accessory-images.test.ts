@@ -57,7 +57,7 @@ describe("accessory image mapping", () => {
   })
 
   it("labels uncertain or group stills as set reference or context, not as a single SKU", () => {
-    expect(ACCESSORY_SET_REFERENCE_LABEL).toBe("Set reference / 套装参考图")
+    expect(ACCESSORY_SET_REFERENCE_LABEL).toBe("Set reference")
     expect(accessoryImageFor("case-01", "MINI MAKEUP BAG").kind).toBe("set-reference")
     expect(accessoryImageFor("case-13", "MUG").kind).toBe("set-reference")
     expect(accessoryImageFor("case-13", "INSULATED TUMBLER").kind).toBe("set-reference")
