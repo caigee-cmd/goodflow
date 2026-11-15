@@ -3,86 +3,73 @@ import { CASES } from "./cases"
 import { PRODUCTS } from "./products"
 import { DRINKWARE } from "./ranking"
 import { buildRfqEmail } from "@/lib/rfq-email"
-import { orderBy } from "@/lib/dates"
-import { lineTotal, tierFor } from "@/lib/pricing"
 import { DEFAULT_FILTERS, filterProducts, sortProducts } from "@/lib/filters"
+import { hasPricing } from "@/lib/pricing"
 
 const p = (id: string) => PRODUCTS.find((x) => x.id === id)!
-const atMoq = (id: string) => ({ id, qty: p(id).priceTiers[0].moq })
-const top = (m: "searchHeat" | "caseClicks" | "purchaseVolume") =>
-  [...DRINKWARE.items].sort((a, b) => b.metrics[m] - a.metrics[m])[0].name
 
-describe("demo numbers", () => {
-  it("B1 basket", () => {
-    const lines = ["arc-001", "arc-003", "ext-002", "ext-005"].map(atMoq)
-    expect(lines.reduce((s, l) => s + lineTotal(p(l.id), l.qty), 0)).toBe(231_500)
-    const maxLead = Math.max(...lines.map((l) => tierFor(p(l.id), l.qty).leadTimeDays))
-    expect(orderBy("2027-01-15", maxLead)).toBe("2026-11-01")
+describe("trend catalog", () => {
+  it("has 29 campaign cases and products", () => {
+    expect(CASES).toHaveLength(29)
+    expect(PRODUCTS).toHaveLength(29)
+    expect(CASES.map((item) => item.id)).toEqual(Array.from({ length: 29 }, (_, i) => `case-${String(i + 1).padStart(2, "0")}`))
+    expect(PRODUCTS.map((item) => item.id)).toEqual(Array.from({ length: 29 }, (_, i) => `ext-${String(i + 1).padStart(3, "0")}`))
   })
 
-  it("trunk tiers", () => {
-    expect(lineTotal(p("arc-001"), 3000)).toBe(114_000)
-    expect(orderBy("2027-01-15", 70)).toBe("2026-11-06")
-    expect(lineTotal(p("arc-001"), 10_000)).toBe(330_000)
-    expect(orderBy("2027-01-15", tierFor(p("arc-001"), 10_000).leadTimeDays)).toBe("2026-10-27")
+  it("does not invent commercial fields", () => {
+    expect(PRODUCTS.every((item) => !hasPricing(item))).toBe(true)
+    expect(PRODUCTS.every((item) => !item.material && !item.packaging && !item.size && !item.category)).toBe(true)
+    expect(CASES.every((item) => !item.description && !item.takeaway && item.items.length === 0)).toBe(true)
   })
 
-  it("C3 box price", () => {
-    expect(p("ext-008").priceTiers[0].unitPrice + p("arc-003").priceTiers[0].unitPrice).toBeCloseTo(19.4)
+  it("keeps known campaign facts", () => {
+    expect(p("ext-001").name).toBe("Charlotte Tilbury2026圣诞礼盒")
+    expect(p("ext-001").brands).toEqual(["charlotte-tilbury"])
+    expect(p("ext-002").name).toBe("Dior Holiday limited Collection 2026")
+    expect(p("ext-023").name).toBe("SK-II×CRY BABY 联名系列")
+    expect(CASES[0].year).toBe(2026)
+    expect(CASES[0].occasions).toEqual(["holiday"])
+    expect(CASES.filter((item) => item.occasions.includes("holiday")).length).toBeGreaterThanOrEqual(6)
   })
 
-  it("default categories view", () => {
+  it("default categories view shows the full catalog", () => {
     const visible = filterProducts(PRODUCTS, DEFAULT_FILTERS)
     expect(DEFAULT_FILTERS.source).toBe("all")
-    expect(visible).toEqual(PRODUCTS.filter((item) => item.brands.includes("estee-lauder")))
-    expect(visible.some((item) => item.source === "archive")).toBe(true)
-    expect(visible.some((item) => item.source === "external")).toBe(true)
-    expect(sortProducts(visible, "featured")[0].id).toBe("arc-001")
-    expect(
-      PRODUCTS.filter((x) => x.source === "external" && x.brands.includes("estee-lauder")).length,
-    ).toBeGreaterThan(0)
+    expect(DEFAULT_FILTERS.brands).toEqual([])
+    expect(visible).toHaveLength(29)
+    expect(sortProducts(visible, "featured")[0].featured).toBe(true)
   })
 
-  it("B1 candidates", () => {
-    const fit = PRODUCTS.filter((x) => x.occasions.includes("lunar-new-year") && x.priceTiers[0].unitPrice <= 60)
-    expect(fit).toHaveLength(10)
-  })
-
-  it("ranking leaders", () => {
+  it("ranking leaders stay on public data", () => {
+    const top = (m: "searchHeat" | "caseClicks" | "purchaseVolume") =>
+      [...DRINKWARE.items].sort((a, b) => b.metrics[m] - a.metrics[m])[0].name
     expect(top("searchHeat")).toBe("Glass Straw Cup 500ml")
     expect(top("caseClicks")).toBe("Double-Wall Ceramic Tumbler")
     expect(top("purchaseVolume")).toBe("Insulated Travel Cup 350ml")
-  })
-
-  it("cases", () => {
-    expect(CASES.filter((c) => c.occasions.includes("lunar-new-year")).length).toBeGreaterThanOrEqual(4)
-    expect(CASES).toHaveLength(20)
-  })
-
-  it("catalog shape", () => {
-    expect(PRODUCTS).toHaveLength(24)
     expect(DRINKWARE.items).toHaveLength(10)
+    expect(DRINKWARE.items.every((item) => !item.productId)).toBe(true)
   })
 
-  it("rfq email snapshot", () => {
-    const ids = ["arc-001", "arc-003", "ext-002", "ext-005"]
+  it("rfq email asks for a quote without invented totals", () => {
+    const ids = ["ext-001", "ext-002", "ext-003", "ext-005"]
     const email = buildRfqEmail({
-      project: "Lunar New Year 2027 VIP Gifting",
-      neededBy: "2027-01-15",
+      project: "Holiday 2026 gifting",
+      neededBy: "2026-12-01",
       region: "APAC",
-      notes: "Re-run archive pieces with Year of the Goat artwork.",
+      notes: "Please quote these 2026 holiday collections.",
       lines: ids.map((id) => ({
         productId: id,
-        qty: p(id).priceTiers[0].moq,
+        qty: 1,
         terms: "EXW",
         selected: true,
       })),
     })
     expect(email.to).toBe("sales@goodflow.example")
-    expect(email.subject).toBe("RFQ — Lunar New Year 2027 VIP Gifting — 4 items")
-    expect(email.body).toContain("Estimated total: $231,500")
-    expect(email.body).toContain("order by Nov 1, 2026")
-    expect(email.body).toContain("Qty 3,000 · $38.00/unit · 70-day lead time · EXW")
+    expect(email.subject).toBe("RFQ — Holiday 2026 gifting — 4 items")
+    expect(email.body).toContain("Charlotte Tilbury2026圣诞礼盒")
+    expect(email.body).toContain("Dior Holiday limited Collection 2026")
+    expect(email.body).not.toContain("Estimated total")
+    expect(email.body).toContain("Please provide unit pricing, MOQ, and lead time")
     expect(email.body).toContain("Anna Chen")
   })
 })

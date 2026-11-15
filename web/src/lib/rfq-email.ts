@@ -1,7 +1,7 @@
 import { brand } from "@/config/brand"
 import { product } from "@/data"
 import { fmtDate, money, orderBy } from "@/lib/dates"
-import { lineTotal, tierFor } from "@/lib/pricing"
+import { hasPricing, lineTotal, tierFor } from "@/lib/pricing"
 
 export type RfqEmailInput = {
   project: string
@@ -14,35 +14,51 @@ export type RfqEmailInput = {
 export function buildRfqEmail(state: RfqEmailInput): { to: string; subject: string; body: string } {
   const selected = state.lines.filter((line) => line.selected)
   const project = state.project || "Gift sourcing"
-  const leads = selected.map((line) => tierFor(product(line.productId), line.qty).leadTimeDays)
-  const maxLead = leads.length ? Math.max(...leads) : 0
-  const total = selected.reduce((sum, line) => sum + lineTotal(product(line.productId), line.qty), 0)
+  const leads = selected
+    .map((line) => tierFor(product(line.productId), line.qty)?.leadTimeDays)
+    .filter((days): days is number => days != null)
+  const maxLead = leads.length ? Math.max(...leads) : undefined
+  const priced = selected.every((line) => hasPricing(product(line.productId)))
+  const total = priced
+    ? selected.reduce((sum, line) => sum + (lineTotal(product(line.productId), line.qty) ?? 0), 0)
+    : undefined
 
   const blocks = selected.map((line, index) => {
     const item = product(line.productId)
     const tier = tierFor(item, line.qty)
     const origin =
-      item.source === "archive" ? `Archive · ${item.campaign}` : `External Pick · ${item.maker}`
-    return [
-      `${index + 1}. ${item.name}`,
-      `   ${origin}`,
-      `   Qty ${line.qty.toLocaleString("en-US")} · ${money(tier.unitPrice)}/unit · ${tier.leadTimeDays}-day lead time · ${line.terms}`,
-      `   Subtotal: ${money(lineTotal(item, line.qty), 0)}`,
-    ].join("\n")
+      item.source === "archive"
+        ? ["Archive", item.campaign].filter(Boolean).join(" · ")
+        : ["External Pick", item.maker].filter(Boolean).join(" · ")
+    const qty = `Qty ${line.qty.toLocaleString("en-US")}`
+    const bits = [qty]
+    if (tier) {
+      bits.push(`${money(tier.unitPrice)}/unit`, `${tier.leadTimeDays}-day lead time`)
+    }
+    bits.push(line.terms)
+    const rows = [`${index + 1}. ${item.name}`, `   ${origin}`, `   ${bits.join(" · ")}`]
+    const sub = lineTotal(item, line.qty)
+    if (sub != null) rows.push(`   Subtotal: ${money(sub, 0)}`)
+    return rows.join("\n")
   })
+
+  const needed =
+    maxLead != null
+      ? `Needed by: ${fmtDate(state.neededBy)} (order by ${fmtDate(orderBy(state.neededBy, maxLead))})`
+      : `Needed by: ${fmtDate(state.neededBy)}`
 
   const body = [
     "Hi GoodFlow team,",
     "",
     `Please quote the following items for xBeauty — ${project}.`,
     "",
-    `Needed by: ${fmtDate(state.neededBy)} (order by ${fmtDate(orderBy(state.neededBy, maxLead))})`,
+    needed,
     `Delivery region: ${state.region}`,
     "",
     blocks.join("\n\n"),
     "",
-    `Estimated total: ${money(total, 0)}`,
-    "Pricing is indicative and based on volume tiers; shipping terms affect the final quote.",
+    total != null ? `Estimated total: ${money(total, 0)}` : "Please provide unit pricing, MOQ, and lead time for each item.",
+    total != null ? "Pricing is indicative and based on volume tiers; shipping terms affect the final quote." : "",
     "",
     state.notes ? `Notes: ${state.notes}` : "",
     state.notes ? "" : "",

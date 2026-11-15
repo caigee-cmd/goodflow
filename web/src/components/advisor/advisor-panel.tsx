@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { product } from "@/data"
 import { campaignShort } from "@/lib/catalog"
 import { money } from "@/lib/dates"
-import { fromPrice } from "@/lib/pricing"
+import { fromPrice, hasPricing, minQty } from "@/lib/pricing"
 import { BASKET, GREETING, HOME_SUGGESTIONS, LNY_NOTES, LNY_PROJECT, Q, routeAdvisor } from "@/lib/chat/script"
 import {
   ChainOfThought,
@@ -128,18 +128,28 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
   function addBasket() {
     const result = add([...BASKET], { project: LNY_PROJECT, notes: LNY_NOTES })
     toast(`${result.added} items added to RFQ List`)
-    const total = useRfq
-      .getState()
-      .lines.filter((line) => line.selected)
-      .reduce((sum, line) => sum + line.qty * product(line.productId).priceTiers.find((tier) => line.qty >= tier.moq)!.unitPrice, 0)
+    const selected = useRfq.getState().lines.filter((line) => line.selected)
+    const priced = selected.every((line) => hasPricing(product(line.productId)))
+    const total = priced
+      ? selected.reduce((sum, line) => {
+          const item = product(line.productId)
+          const unit = item.priceTiers?.find((tier) => line.qty >= tier.moq)?.unitPrice
+          return unit == null ? sum : sum + line.qty * unit
+        }, 0)
+      : undefined
+    const qtyNote = selected.some((line) => hasPricing(product(line.productId)))
+      ? "at MOQ quantities"
+      : "at requested quantities"
     setLines((current) => [
       ...current,
       {
         role: "advisor",
-        text: `**Added to RFQ List**
-
-- **${result.added} items** at MOQ quantities${result.skipped ? `\n- **${result.skipped}** already on the list` : ""}
-- Estimated total **${money(total, 0)}**`,
+        text: [
+          "**Added to RFQ List**",
+          "",
+          `- **${result.added} items** ${qtyNote}${result.skipped ? `\n- **${result.skipped}** already on the list` : ""}`,
+          total != null ? `- Estimated total **${money(total, 0)}**` : "- Sales will reply with unit pricing and lead time.",
+        ].join("\n"),
         followUps: [Q.draftEmail],
       },
     ])
@@ -260,9 +270,13 @@ export function AdvisorPanel({ open, onClose }: { open: boolean; onClose: () => 
                           </span>
                           <span className="min-w-0 flex-1">
                             <span className="block truncate text-[13px] font-medium">{item.name}</span>
+                            {hasPricing(item) ? (
                             <span className="block text-[12px] tabular-nums text-el-taupe-ink">
-                              {money(fromPrice(item))} · MOQ {item.priceTiers[0].moq.toLocaleString("en-US")}
+                              {money(fromPrice(item) ?? 0)} · MOQ {minQty(item).toLocaleString("en-US")}
                             </span>
+                            ) : item.theme ? (
+                            <span className="block truncate text-[12px] text-el-taupe-ink">{item.theme}</span>
+                            ) : null}
                           </span>
                         </button>
                       )

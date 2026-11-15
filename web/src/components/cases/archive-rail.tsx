@@ -29,9 +29,11 @@ export function ArchiveRail({ onOpenProduct }: { onOpenProduct: (id: string) => 
                   <span className="mt-1 block truncate text-[10px] leading-[14px] font-semibold tracking-[0.12em] text-el-gold-deep uppercase">
                     {campaignShort(item)}
                   </span>
+                  {[item.material, item.size].filter(Boolean).length ? (
                   <span className="mt-1 block truncate text-[12px] leading-[18px] text-el-taupe-ink">
                     {[item.material, item.size].filter(Boolean).join(" · ")}
                   </span>
+                  ) : null}
                 </span>
               </button>
             </li>

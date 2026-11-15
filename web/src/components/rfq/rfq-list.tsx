@@ -1,13 +1,13 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { Check, Clock, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 import { product } from "@/data"
 import { brand } from "@/config/brand"
 import { fmtDate, money, orderBy } from "@/lib/dates"
-import { lineTotal, nextTier, tierFor } from "@/lib/pricing"
+import { hasPricing, lineTotal, minQty, nextTier, tierFor } from "@/lib/pricing"
 import type { Region, ShippingTerms } from "@/lib/types"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
 import { Modal, useModalClose } from "@/components/ui/modal"
@@ -23,7 +23,10 @@ function ReviewModal({ onDone }: { onDone: (sent: { id: string; count: number } 
   const submit = useRfq((state) => state.submit)
   const sent = useRef<{ id: string; count: number } | null>(null)
   const selected = lines.filter((line) => line.selected)
-  const total = selected.reduce((sum, line) => sum + lineTotal(product(line.productId), line.qty), 0)
+  const priced = selected.every((line) => hasPricing(product(line.productId)))
+  const total = priced
+    ? selected.reduce((sum, line) => sum + (lineTotal(product(line.productId), line.qty) ?? 0), 0)
+    : undefined
 
   return (
     <Modal label="Review RFQ" onClose={() => onDone(sent.current)} className="w-full max-w-[720px] rounded-[10px] bg-el-paper p-6 shadow-el-lg">
@@ -48,7 +51,7 @@ function ReviewModal({ onDone }: { onDone: (sent: { id: string; count: number } 
           <tr>
             <th className="py-2 font-semibold">Item</th>
             <th className="py-2 font-semibold">Qty</th>
-            <th className="py-2 font-semibold">Unit</th>
+            {priced ? <th className="py-2 font-semibold">Unit</th> : null}
             <th className="py-2 font-semibold">Terms</th>
           </tr>
         </thead>
@@ -60,7 +63,7 @@ function ReviewModal({ onDone }: { onDone: (sent: { id: string; count: number } 
               <tr key={line.productId} className="border-t border-el-line">
                 <td className="py-3">{item.name}</td>
                 <td className="py-3 tabular-nums">{line.qty.toLocaleString("en-US")}</td>
-                <td className="py-3 tabular-nums">{money(tier.unitPrice)}</td>
+                {priced ? <td className="py-3 tabular-nums">{tier ? money(tier.unitPrice) : ""}</td> : null}
                 <td className="py-3">{line.terms}</td>
               </tr>
             )
@@ -68,8 +71,14 @@ function ReviewModal({ onDone }: { onDone: (sent: { id: string; count: number } 
         </tbody>
       </table>
       {notes.trim() ? <p className="mt-4 text-[13px] leading-5 text-el-taupe-ink">Notes · {notes}</p> : null}
-      <p className="mt-5 text-[16px] font-semibold tabular-nums">Estimated total {money(total, 0)}</p>
-      <p className="mt-1 text-[12px] text-el-taupe-ink">Indicative pricing · Final quote from GoodFlow sales</p>
+      {total != null ? (
+        <>
+          <p className="mt-5 text-[16px] font-semibold tabular-nums">Estimated total {money(total, 0)}</p>
+          <p className="mt-1 text-[12px] text-el-taupe-ink">Indicative pricing · Final quote from GoodFlow sales</p>
+        </>
+      ) : (
+        <p className="mt-5 text-[13px] text-el-taupe-ink">Request a quote for unit pricing, MOQ, and lead time.</p>
+      )}
       <SendButton
         onSend={() => {
           const result = submit()
@@ -158,14 +167,16 @@ export function RfqList() {
   }, [])
 
   const selected = lines.filter((line) => line.selected)
-  const total = selected.reduce((sum, line) => sum + lineTotal(product(line.productId), line.qty), 0)
-  const longest = useMemo(() => {
-    const leads = selected.map((line) => {
-      const item = product(line.productId)
-      return { days: tierFor(item, line.qty).leadTimeDays, name: item.name }
-    })
-    return [...leads].sort((a, b) => b.days - a.days)[0]
-  }, [selected])
+  const priced = selected.every((line) => hasPricing(product(line.productId)))
+  const total = priced
+    ? selected.reduce((sum, line) => sum + (lineTotal(product(line.productId), line.qty) ?? 0), 0)
+    : undefined
+  const leads = selected.flatMap((line) => {
+    const item = product(line.productId)
+    const days = tierFor(item, line.qty)?.leadTimeDays
+    return days == null ? [] : [{ days, name: item.name }]
+  })
+  const longest = leads.length ? [...leads].sort((a, b) => b.days - a.days)[0] : undefined
 
   if (!hydrated || loading) return <RfqListSkeleton />
   if (lines.length === 0) {
@@ -209,7 +220,7 @@ export function RfqList() {
                     {item.source === "archive" ? "Archive" : "External"}
                   </p>
                   <h2 className="mt-1 text-[15px] leading-[22px]">{item.name}</h2>
-                  <p className="text-[12px] leading-[18px] text-el-taupe-ink">{item.size}</p>
+                  {item.size ? <p className="text-[12px] leading-[18px] text-el-taupe-ink">{item.size}</p> : null}
                   <div className="mt-3 flex flex-wrap items-center gap-3">
                     <select
                       aria-label="Shipping terms"
@@ -226,7 +237,7 @@ export function RfqList() {
                         type="button"
                         className="w-8"
                         aria-label="Decrease quantity"
-                        onClick={() => update(line.productId, { qty: Math.max(item.priceTiers[0].moq, line.qty - 500) })}
+                        onClick={() => update(line.productId, { qty: Math.max(minQty(item), line.qty - (hasPricing(item) ? 500 : 1)) })}
                       >
                         −
                       </button>
@@ -235,7 +246,7 @@ export function RfqList() {
                         type="button"
                         className="w-8"
                         aria-label="Increase quantity"
-                        onClick={() => update(line.productId, { qty: line.qty + 500 })}
+                        onClick={() => update(line.productId, { qty: line.qty + (hasPricing(item) ? 500 : 1) })}
                       >
                         +
                       </button>
@@ -252,9 +263,13 @@ export function RfqList() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-[13px] tabular-nums text-el-taupe-ink">{money(tier.unitPrice)}</p>
-                  <p className="mt-1 text-[16px] font-semibold tabular-nums">{money(lineTotal(item, line.qty), 0)}</p>
-                  <button type="button" aria-label={`Remove ${item.name}`} className="mt-3" onClick={() => remove(line.productId)}>
+                  {tier ? (
+                    <>
+                      <p className="text-[13px] tabular-nums text-el-taupe-ink">{money(tier.unitPrice)}</p>
+                      <p className="mt-1 text-[16px] font-semibold tabular-nums">{money(lineTotal(item, line.qty) ?? 0, 0)}</p>
+                    </>
+                  ) : null}
+                  <button type="button" aria-label={`Remove ${item.name}`} className={tier ? "mt-3" : ""} onClick={() => remove(line.productId)}>
                     <Trash2 className="size-4 text-el-taupe-ink" strokeWidth={1.5} />
                   </button>
                 </div>
@@ -274,7 +289,7 @@ export function RfqList() {
             />
           </label>
           <p className="mt-4 text-[13px] text-el-taupe-ink">{selected.length} selected · {selected.reduce((sum, line) => sum + line.qty, 0).toLocaleString("en-US")} units</p>
-          <p className="mt-1 text-[24px] font-semibold tabular-nums">Est. total {money(total, 0)}</p>
+          {total != null ? <p className="mt-1 text-[24px] font-semibold tabular-nums">Est. total {money(total, 0)}</p> : null}
           <label className="mt-4 block text-[12px] text-el-taupe-ink">
             Needed by
             <input
@@ -319,7 +334,11 @@ export function RfqList() {
           >
             Review & send
           </button>
+          {total != null ? (
           <p className="mt-2 text-center text-[11px] text-el-taupe-ink">Indicative pricing · Final quote from GoodFlow sales</p>
+          ) : (
+          <p className="mt-2 text-center text-[11px] text-el-taupe-ink">Sales will reply with unit pricing and lead time.</p>
+          )}
         </aside>
       </div>
 

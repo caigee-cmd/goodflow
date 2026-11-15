@@ -1,9 +1,4 @@
-export type BrandId =
-  | "estee-lauder"
-  | "la-mer"
-  | "mac"
-  | "clinique"
-  | "jo-malone-london"
+export type BrandId = string
 
 export type OccasionId = "lunar-new-year" | "holiday" | "vip" | "launch" | "employee"
 
@@ -33,24 +28,25 @@ type ProductBase = {
   id: string
   name: string
   brands: BrandId[]
-  category: CategoryId
+  category?: CategoryId
   occasions: OccasionId[]
-  year: number
+  year?: number
   images: string[]
   inspiration?: string
-  material: string
-  packaging: string
-  size: string
-  priceTiers: PriceTier[]
-  clicks: number
+  material?: string
+  packaging?: string
+  size?: string
+  priceTiers?: PriceTier[]
+  clicks?: number
   featured?: boolean
+  theme?: string
 }
 
 export type ArchiveProduct = ProductBase & {
   source: "archive"
-  campaign: string
-  regions: Region[]
-  notes: string
+  campaign?: string
+  regions?: Region[]
+  notes?: string
 }
 
 export type ExternalProduct = ProductBase & {
@@ -60,7 +56,7 @@ export type ExternalProduct = ProductBase & {
 
 export type Product = ArchiveProduct | ExternalProduct
 
-export type CaseItem = { name: string; spec: string; image: string; productId?: string }
+export type CaseItem = { name: string; spec?: string; image?: string; productId?: string }
 
 export type Case = {
   id: string
@@ -68,13 +64,13 @@ export type Case = {
   client: string
   kind: "elc" | "industry" | "ip"
   occasions: OccasionId[]
-  year: number
-  region: Region
+  year?: number
+  region?: Region
   cover: string
   coverAspect: "3/4" | "4/5" | "1/1" | "4/3"
   images: string[]
-  description: string
-  takeaway: string
+  description?: string
+  takeaway?: string
   items: CaseItem[]
   featured?: boolean
   chips: HomeChipId[]

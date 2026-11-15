@@ -3,7 +3,7 @@ export type RfqHistoryStatus = "Sent" | "Quoted" | "In review" | "Closed"
 export type RfqHistoryLine = {
   name: string
   qty: number
-  unitPrice: number
+  unitPrice?: number
   terms: "EXW" | "FOB" | "DAP"
 }
 
@@ -57,6 +57,10 @@ export const RFQ_HISTORY: RfqHistoryItem[] = [
   },
 ]
 
+export function rfqHistoryHasPricing(item: RfqHistoryItem) {
+  return item.lines.every((line) => line.unitPrice != null)
+}
+
 export function rfqHistoryTotal(item: RfqHistoryItem) {
-  return item.lines.reduce((sum, line) => sum + line.qty * line.unitPrice, 0)
+  return item.lines.reduce((sum, line) => sum + line.qty * (line.unitPrice ?? 0), 0)
 }

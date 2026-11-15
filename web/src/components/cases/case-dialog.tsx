@@ -38,7 +38,7 @@ export function CaseDialog({
   const [index, setIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [productId, setProductId] = useState<string | null>(null)
-  const occasion = occasionLabel(item.occasions[0])
+  const meta = [item.occasions[0] ? occasionLabel(item.occasions[0]) : "", item.year, item.client].filter(Boolean).join(" · ")
 
   function show(next: number) {
     const last = item.images.length - 1
@@ -62,7 +62,7 @@ export function CaseDialog({
 
         <div className="min-w-0 overflow-auto pr-2">
           <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
-            {occasion} · {item.year} · {item.client}
+            {meta}
           </p>
           <h2 className="mt-2 font-heading text-[30px] leading-[38px] tracking-[0.04em] uppercase">{item.title}</h2>
           <div className="relative mt-6 aspect-[16/10] overflow-hidden rounded-lg bg-el-cream">
@@ -84,16 +84,20 @@ export function CaseDialog({
               />
             ))}
           </div>
-          <p className="mt-6 max-w-[680px] text-[14px] leading-6">{item.description}</p>
+          {item.description ? <p className="mt-6 max-w-[680px] text-[14px] leading-6">{item.description}</p> : null}
+          {item.takeaway ? (
           <blockquote className="mt-6 border-l-2 border-el-gold bg-el-cream/50 p-4">
             <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
               Why it worked
             </p>
             <p className="mt-2 text-[14px] leading-6">{item.takeaway}</p>
           </blockquote>
+          ) : null}
         </div>
 
         <aside className="flex min-h-0 flex-col border-l border-el-line pl-6">
+          {item.items.length ? (
+          <>
           <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">In this case</p>
           <div className="mt-4 grid grid-cols-2 gap-4 overflow-auto">
             {item.items.map((piece) => {
@@ -115,8 +119,10 @@ export function CaseDialog({
               )
             })}
           </div>
+          </>
+          ) : null}
           <Link
-            href={`/categories?source=all&occasion=${item.occasions[0]}`}
+            href={item.occasions[0] ? `/categories?source=all&occasion=${item.occasions[0]}` : "/categories"}
             className="mt-auto flex h-11 items-center justify-center rounded-md bg-el-black text-[12px] font-semibold tracking-[0.12em] text-el-ivory uppercase hover:text-el-gold"
           >
             Browse similar items

@@ -5,7 +5,7 @@ import { ArrowLeft, Heart, X } from "lucide-react"
 import { brand } from "@/config/brand"
 import { BRANDS, product } from "@/data"
 import { fmtDate, money, orderBy } from "@/lib/dates"
-import { lineTotal, nextTier, tierFor } from "@/lib/pricing"
+import { hasPricing, lineTotal, minQty, nextTier, tierFor } from "@/lib/pricing"
 import type { ShippingTerms } from "@/lib/types"
 import { demoImage } from "@/lib/demo-images"
 import { ImageStage } from "@/components/media/image-stage"
@@ -40,7 +40,7 @@ export function ProductDialog({
   onBack?: () => void
 }) {
   const item = product(id)
-  const [qty, setQty] = useState(item.priceTiers[0].moq)
+  const [qty, setQty] = useState(minQty(item))
   const [terms, setTerms] = useState<ShippingTerms>("EXW")
   const [view, setView] = useState(0)
   const [direction, setDirection] = useState(1)
@@ -49,13 +49,15 @@ export function ProductDialog({
   const lines = useRfq((state) => state.lines)
   const add = useRfq((state) => state.add)
   const inList = lines.some((line) => line.productId === id)
+  const priced = hasPricing(item)
   const tier = tierFor(item, qty)
   const upcoming = nextTier(item, qty)
-  const safeQty = Math.max(item.priceTiers[0].moq, qty)
+  const safeQty = Math.max(minQty(item), qty)
   const brandNames = item.brands.map((id) => BRANDS.find((entry) => entry.id === id)?.label ?? id)
+  const step = priced ? 500 : 1
 
   function commit(value: number) {
-    setQty(Math.max(item.priceTiers[0].moq, value))
+    setQty(Math.max(minQty(item), value))
   }
 
   return (
@@ -124,21 +126,22 @@ export function ProductDialog({
             </div>
             <h2 className="mt-3 font-heading text-[30px] leading-[38px]">{item.name}</h2>
 
-            {item.source === "archive" ? (
-              <>
-                <p className="mt-3 text-[14px] leading-[22px]">{item.campaign}</p>
-                <blockquote className="mt-4 border-l-2 border-el-gold bg-el-cream p-4">
-                  <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
-                    Archive note
-                  </p>
-                  <p className="mt-2 text-[14px] leading-6">{item.notes}</p>
-                </blockquote>
-              </>
-            ) : (
+            {item.source === "archive" && item.campaign ? (
+              <p className="mt-3 text-[14px] leading-[22px]">{item.campaign}</p>
+            ) : null}
+            {item.source === "archive" && item.notes ? (
+              <blockquote className="mt-4 border-l-2 border-el-gold bg-el-cream p-4">
+                <p className="text-[11px] leading-4 font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
+                  Archive note
+                </p>
+                <p className="mt-2 text-[14px] leading-6">{item.notes}</p>
+              </blockquote>
+            ) : null}
+            {item.source === "external" ? (
               <p className="mt-3 text-[14px] leading-[22px] text-el-taupe-ink">
-                By {item.maker} · Recommended for {brandNames.join(", ")}
+                {[item.maker ? `By ${item.maker}` : "", item.theme].filter(Boolean).join(" · ")}
               </p>
-            )}
+            ) : null}
 
             <dl className="mt-6 grid grid-cols-[140px_1fr] gap-y-3 text-[13px] leading-5">
               {[
@@ -183,6 +186,8 @@ export function ProductDialog({
               </div>
             </fieldset>
 
+            {priced ? (
+              <>
             <table className="mt-6 w-full text-left text-[13px]">
               <caption className="mb-2 text-left text-[11px] font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">
                 Volume pricing
@@ -195,8 +200,8 @@ export function ProductDialog({
                 </tr>
               </thead>
               <tbody>
-                {item.priceTiers.map((row) => {
-                  const current = row.moq === tier.moq
+                {item.priceTiers!.map((row) => {
+                  const current = row.moq === tier?.moq
                   return (
                     <tr key={row.moq} className={current ? "border-l-2 border-el-gold bg-el-cream" : ""}>
                       <td className="px-2 py-2 tabular-nums">{row.moq.toLocaleString("en-US")}</td>
@@ -216,11 +221,13 @@ export function ProductDialog({
                 Order {upcoming.moq.toLocaleString("en-US")}+ to unlock {money(upcoming.unitPrice)}/unit
               </button>
             ) : null}
+              </>
+            ) : null}
 
             <div className="mt-6">
               <p className="text-[11px] font-semibold tracking-[0.16em] text-el-taupe-ink uppercase">Quantity</p>
               <div className="mt-2 inline-flex h-11 items-center rounded-md border border-el-line">
-                <button type="button" className="w-11" onClick={() => commit(safeQty - 500)} aria-label="Decrease quantity">
+                <button type="button" className="w-11" onClick={() => commit(safeQty - step)} aria-label="Decrease quantity">
                   −
                 </button>
                 <input
@@ -231,7 +238,7 @@ export function ProductDialog({
                   onBlur={() => commit(qty)}
                   className="w-24 bg-transparent text-center text-[14px] tabular-nums outline-none"
                 />
-                <button type="button" className="w-11" onClick={() => commit(safeQty + 500)} aria-label="Increase quantity">
+                <button type="button" className="w-11" onClick={() => commit(safeQty + step)} aria-label="Increase quantity">
                   +
                 </button>
               </div>
@@ -239,11 +246,13 @@ export function ProductDialog({
           </div>
 
           <div className="border-t border-el-line pt-4">
-            <p className="text-[12px] leading-[18px] text-el-taupe-ink tabular-nums">
-              Est. {money(lineTotal(item, safeQty), 0)} · Order by{" "}
-              {fmtDate(orderBy(brand.rfq.defaultNeededBy, tier.leadTimeDays))} to land by{" "}
-              {fmtDate(brand.rfq.defaultNeededBy)}
-            </p>
+            {priced && tier ? (
+              <p className="text-[12px] leading-[18px] text-el-taupe-ink tabular-nums">
+                Est. {money(lineTotal(item, safeQty) ?? 0, 0)} · Order by{" "}
+                {fmtDate(orderBy(brand.rfq.defaultNeededBy, tier.leadTimeDays))} to land by{" "}
+                {fmtDate(brand.rfq.defaultNeededBy)}
+              </p>
+            ) : null}
             <div className="mt-3 flex gap-2">
               <button
                 type="button"

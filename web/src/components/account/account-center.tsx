@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Heart } from "lucide-react"
 import { CASES, PRODUCTS } from "@/data"
-import { RFQ_HISTORY, rfqHistoryTotal, type RfqHistoryItem } from "@/data/estee-lauder/rfq-history"
+import { RFQ_HISTORY, rfqHistoryHasPricing, rfqHistoryTotal, type RfqHistoryItem } from "@/data/estee-lauder/rfq-history"
 import { brand } from "@/config/brand"
 import { money } from "@/lib/dates"
 import { cn } from "@/lib/utils"
@@ -287,7 +287,7 @@ function HistoryDetail({ item }: { item: RfqHistoryItem }) {
           <tr>
             <th className="py-2 font-semibold">Item</th>
             <th className="py-2 font-semibold">Qty</th>
-            <th className="py-2 font-semibold">Unit</th>
+            {rfqHistoryHasPricing(item) ? <th className="py-2 font-semibold">Unit</th> : null}
             <th className="py-2 font-semibold">Terms</th>
           </tr>
         </thead>
@@ -296,13 +296,13 @@ function HistoryDetail({ item }: { item: RfqHistoryItem }) {
             <tr key={`${item.id}-${line.name}`} className="border-t border-el-line">
               <td className="py-3">{line.name}</td>
               <td className="py-3 tabular-nums">{line.qty.toLocaleString("en-US")}</td>
-              <td className="py-3 tabular-nums">{money(line.unitPrice)}</td>
+              {rfqHistoryHasPricing(item) ? <td className="py-3 tabular-nums">{money(line.unitPrice ?? 0)}</td> : null}
               <td className="py-3">{line.terms}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p className="mt-6 text-[14px] tabular-nums">Estimated total {money(rfqHistoryTotal(item), 0)}</p>
+      {rfqHistoryHasPricing(item) ? <p className="mt-6 text-[14px] tabular-nums">Estimated total {money(rfqHistoryTotal(item), 0)}</p> : null}
       <p className="mt-2 text-[12px] leading-[18px] text-el-taupe-ink">Read only. This request has already been sent.</p>
     </div>
   )
