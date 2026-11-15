@@ -1,7 +1,7 @@
 export const Q = {
   archiveLny: "What did we gift APAC VIPs last Lunar New Year?",
   holiday2026: "Show me 2026 holiday gift collections",
-  trending: "What's trending in drinkware this season?",
+  trending: "Show me the highlighted campaign cases",
   draftEmail: "Draft the RFQ email",
 } as const
 
@@ -14,7 +14,7 @@ export const FALLBACK = `I'm in demo mode, so I stay on three things:
 
 - **Campaign collections** — holiday, collab, and limited merch
 - **Product browse** — image, name, and brand
-- **Industry rankings** — what's moving in search heat and volume
+- **Highlighted cases** — a curated shortlist from the current catalog
 
 Try one of these:`
 
@@ -81,20 +81,16 @@ Unit pricing, MOQ, and lead time are not in this catalog yet — request a quote
   if (q === Q.trending.toLowerCase() || /(trend|ranking|search heat)/.test(q)) {
     return {
       id: "C1",
-      steps: ["Reading GoodFlow public data · Jul–Sep 2026", "Ranking 10 drinkware items by search heat · Top 3"],
-      reply: `**Drinkware · Jul–Sep 2026**
+      steps: ["Opening the curated case shortlist", "Reading the 10 highlighted campaign titles"],
+      reply: `**Highlighted cases**
 
-**Search heat**
+A curated shortlist of 10 campaign cases, in editorial order. No popularity metrics are used.
 
-1. **Glass Straw Cup 500ml** — 18,420 searches, up 3 places
-2. **Smart Temperature Bottle**
-3. **Double-Wall Ceramic Tumbler** — also first in case clicks
+1. **The Prada Purple PR Gift Box Includes A Film Camera**
+2. **Chanel Launches Makeup With A Denim-style Pouch**
+3. **Sephora Collaboration Series: Denim-style Makeup Storage**
 
-**Purchase volume**
-
-- **Insulated Travel Cup 350ml** still leads, at **212,000 units**
-
-These ranking figures come from GoodFlow public data, not the campaign catalog.`,
+The remaining seven continue through playful, holiday, and collaboration collections. Open Ranking to browse all ten and view the matching case.`,
     }
   }
   if (q === Q.draftEmail.toLowerCase() || /(draft|email|rfq|quote)/.test(q)) {
@@ -117,7 +113,7 @@ Review the item list and quantities, then send. Sales will reply with unit prici
 
 - **Collections** — holiday, collab, and limited merch
 - **Brief** — a short list you can quote
-- **Rankings** — what's trending this season`,
+- **Ranking** — a curated shortlist of highlighted cases`,
       followUps: HOME_SUGGESTIONS,
     }
   }

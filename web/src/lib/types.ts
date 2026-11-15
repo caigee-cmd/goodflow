@@ -76,21 +76,17 @@ export type Case = {
   chips: HomeChipId[]
 }
 
-export type RankingMetric = "searchHeat" | "caseClicks" | "purchaseVolume"
-
 export type RankingItem = {
   id: string
   name: string
   image: string
-  productId?: string
-  metrics: Record<RankingMetric, number>
-  searchHeatPrevRank: number | null
+  caseId: string
+  theme?: string
 }
 
 export type RankingBoard = {
-  id: "drinkware" | "home-scent"
+  id: string
   label: string
-  period: string
   items: RankingItem[]
 }
 

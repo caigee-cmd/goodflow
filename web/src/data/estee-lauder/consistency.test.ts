@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 import { CASES } from "./cases"
 import { PRODUCTS } from "./products"
-import { DRINKWARE } from "./ranking"
+import { RANKING } from "./ranking"
 import { buildRfqEmail } from "@/lib/rfq-email"
 import { DEFAULT_FILTERS, filterProducts, sortProducts } from "@/lib/filters"
 import { hasPricing } from "@/lib/pricing"
@@ -40,14 +40,37 @@ describe("trend catalog", () => {
     expect(sortProducts(visible, "featured")[0].featured).toBe(true)
   })
 
-  it("ranking leaders stay on public data", () => {
-    const top = (m: "searchHeat" | "caseClicks" | "purchaseVolume") =>
-      [...DRINKWARE.items].sort((a, b) => b.metrics[m] - a.metrics[m])[0].name
-    expect(top("searchHeat")).toBe("Glass Straw Cup 500ml")
-    expect(top("caseClicks")).toBe("Double-Wall Ceramic Tumbler")
-    expect(top("purchaseVolume")).toBe("Insulated Travel Cup 350ml")
-    expect(DRINKWARE.items).toHaveLength(10)
-    expect(DRINKWARE.items.every((item) => !item.productId)).toBe(true)
+  it("ranking has exactly 10 highlighted cases linked to catalog records", () => {
+    expect(RANKING.items).toHaveLength(10)
+    expect(new Set(RANKING.items.map((item) => item.name)).size).toBe(10)
+    expect(RANKING.items.map((item) => item.name)).toEqual([
+      "The Prada Purple PR Gift Box Includes A Film Camera",
+      "Chanel Launches Makeup With A Denim-style Pouch",
+      "Sephora Collaboration Series: Denim-style Makeup Storage",
+      "Peaceminusone Accessories Blend Daisies And Cloud Cat Motifs",
+      "Little Ondine’s Red-And-Blue Accessories Take Centre Stage",
+      "Beast’s Christmas Collection: A Cosmic Fantasy Unfolds",
+      "Lamer Adds Blind Box Charms To Its Nautical Christmas",
+      "Freeplus × Hello Kitty Dress Beauty Accessories In Fresh Gingham",
+      "SkinCeuticals Meets Fiiijuju In A Soft Blue Accessories Collection",
+      "Kiehl’s ×YUQI：Campus Style Through Denim Accessories",
+    ])
+    const caseIds = RANKING.items.map((item) => item.caseId)
+    expect(caseIds).toEqual([
+      "case-15",
+      "case-08",
+      "case-10",
+      "case-20",
+      "case-19",
+      "case-06",
+      "case-03",
+      "case-29",
+      "case-26",
+      "case-27",
+    ])
+    expect(caseIds.every((id) => CASES.some((item) => item.id === id))).toBe(true)
+    expect(RANKING.items.every((item) => item.image === `/demo/cases/${item.caseId}/cover.jpg`)).toBe(true)
+    expect(RANKING.items.every((item) => !("metrics" in item) && !("productId" in item))).toBe(true)
   })
 
   it("rfq email asks for a quote without invented totals", () => {
