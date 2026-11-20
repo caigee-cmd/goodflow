@@ -34,15 +34,17 @@ export function ProductDialog({
   id,
   onClose,
   onBack,
+  initialView = 0,
 }: {
   id: string
   onClose: () => void
   onBack?: () => void
+  initialView?: number
 }) {
   const item = product(id)
   const [qty, setQty] = useState(minQty(item))
   const [terms, setTerms] = useState<ShippingTerms>("EXW")
-  const [view, setView] = useState(0)
+  const [view, setView] = useState(() => Math.min(Math.max(initialView, 0), Math.max(item.images.length - 1, 0)))
   const [direction, setDirection] = useState(1)
   const saved = useSaved((state) => state.productIds.includes(id))
   const toggleSaved = useSaved((state) => state.toggleProduct)

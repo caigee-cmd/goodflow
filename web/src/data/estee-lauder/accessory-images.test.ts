@@ -66,7 +66,10 @@ describe("accessory image mapping", () => {
       kind: "set-reference",
     })
     expect(accessoryImageFor("case-06", "SILK SCARF").kind).toBe("context")
-    expect(accessoryImageFor("case-23", "HAIR CLIP").kind).toBe("context")
+    expect(accessoryImageFor("case-23", "HAIR CLIP")).toMatchObject({
+      image: "/demo/cases/case-23/item-hair-clip.jpg",
+      kind: "set-reference",
+    })
     const wired = caseItems.filter((entry) => entry.piece.imageKind !== "isolated")
     expect(wired.length).toBeGreaterThan(0)
     expect(wired.every((entry) => entry.piece.imageKind === "set-reference" || entry.piece.imageKind === "context")).toBe(true)
@@ -77,8 +80,8 @@ describe("accessory image mapping", () => {
     const setReference = ACCESSORY_IMAGES.filter((entry) => entry.kind === "set-reference")
     const context = ACCESSORY_IMAGES.filter((entry) => entry.kind === "context")
     expect(isolated.length + setReference.length + context.length).toBe(94)
-    expect(isolated).toHaveLength(32)
-    expect(setReference).toHaveLength(60)
-    expect(context).toHaveLength(2)
+    expect(isolated).toHaveLength(35)
+    expect(setReference).toHaveLength(58)
+    expect(context).toHaveLength(1)
   })
 })

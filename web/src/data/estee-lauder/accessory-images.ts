@@ -71,7 +71,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-02",
     name: "JEWELRY POUCH",
-    image: "/demo/cases/case-02/cover.jpg",
+    image: "/demo/cases/case-02/item-jewelry-pouch.jpg",
     kind: "isolated",
     confidence: "high",
     note: "Clear packshot of the round jewelry case with bow and mirror.",
@@ -87,7 +87,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-05",
     name: "MESSAGE CARD",
-    image: "/demo/cases/case-05/cover.jpg",
+    image: "/demo/cases/case-05/01.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "Cover lineup labels the gold-dot card as 限定心意卡; no isolated packshot.",
@@ -95,7 +95,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-05",
     name: "HAIR CLIP",
-    image: "/demo/cases/case-05/cover.jpg",
+    image: "/demo/cases/case-05/01.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The gold comb/claw at the left of the cover product lineup is the hair clip; shown with cosmetics, not isolated.",
@@ -103,7 +103,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-05",
     name: "COMPACT MIRROR",
-    image: "/demo/cases/case-05/cover.jpg",
+    image: "/demo/cases/case-05/01.jpg",
     kind: "set-reference",
     confidence: "medium",
     note: "Round gold YSL compact(s) appear in the cover lineup. The frame also includes makeup compacts, so this is a set reference rather than a guaranteed isolated mirror SKU.",
@@ -127,7 +127,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-06",
     name: "CERAMIC CANDLE HOLDER",
-    image: "/demo/cases/case-06/cover.jpg",
+    image: "/demo/cases/case-06/03.jpg",
     kind: "set-reference",
     confidence: "medium",
     note: "The white tree candelabra is identifiable only on the illustrated Christmas Wishlist cover, not in a photographic packshot.",
@@ -135,7 +135,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-06",
     name: "SILK SCARF",
-    image: "/demo/cases/case-06/cover.jpg",
+    image: "/demo/cases/case-06/02.jpg",
     kind: "context",
     confidence: "low",
     note: "A silk scarf is named in the PDF but is not clearly identifiable in the supplied stills. The cover is shown as case context, not as a photo of the scarf.",
@@ -159,7 +159,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-08",
     name: "EYESHADOW PALETTE STORAGE POUCH",
-    image: "/demo/cases/case-08/cover.jpg",
+    image: "/demo/cases/case-08/02.jpg",
     kind: "set-reference",
     confidence: "medium",
     note: "Denim pouches appear together on the cover with an eyeshadow palette. The two palette pouches are similar in style, so they are not individually assigned.",
@@ -167,7 +167,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-08",
     name: "HIGHLIGHTER PALETTE STORAGE POUCH",
-    image: "/demo/cases/case-08/cover.jpg",
+    image: "/demo/cases/case-08/02.jpg",
     kind: "set-reference",
     confidence: "medium",
     note: "Same cover set as the eyeshadow pouch. 02.jpg shows a square pouch with a highlighter compact, but the two palette pouches are not labeled distinctly enough to assign separate packshots.",
@@ -255,7 +255,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-12",
     name: "HAIR CLAW CLIP",
-    image: "/demo/cases/case-12/01.jpg",
+    image: "/demo/cases/case-12/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The black Alo hair claw is in the 01.jpg accessory flat lay, not in an isolated packshot.",
@@ -263,7 +263,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-12",
     name: "SCRUNCHIE",
-    image: "/demo/cases/case-12/01.jpg",
+    image: "/demo/cases/case-12/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The white scrunchie is in the same 01.jpg flat lay.",
@@ -271,7 +271,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-12",
     name: "SUNGLASSES",
-    image: "/demo/cases/case-12/01.jpg",
+    image: "/demo/cases/case-12/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The sunglasses are in the same 01.jpg flat lay.",
@@ -279,7 +279,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-12",
     name: "CARDHOLDER",
-    image: "/demo/cases/case-12/01.jpg",
+    image: "/demo/cases/case-12/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The leather cardholder is in the 01.jpg flat lay. 03.jpg also shows it with other leather goods; 01.jpg is used because all listed accessories appear together.",
@@ -287,7 +287,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-13",
     name: "MUG",
-    image: "/demo/cases/case-13/03.jpg",
+    image: "/demo/cases/case-13/01.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "Two different ceramic mugs have isolated stills (cover and 04.jpg). The PDF lists a single MUG, so the 03.jpg set (both mugs plus tumblers and bag) is used instead of assigning one mug photo as the SKU.",
@@ -295,7 +295,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-13",
     name: "INSULATED TUMBLER",
-    image: "/demo/cases/case-13/03.jpg",
+    image: "/demo/cases/case-13/01.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "Two insulated bottles have isolated stills (01.jpg and 02.jpg). The PDF lists a single tumbler, so the 03.jpg set is used.",
@@ -303,7 +303,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-13",
     name: "STORAGE BAG",
-    image: "/demo/cases/case-13/03.jpg",
+    image: "/demo/cases/case-13/01.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The cotton storage bag appears only in the 03.jpg set still.",
@@ -311,7 +311,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-14",
     name: "FRAGRANCE",
-    image: "/demo/cases/case-14/cover.jpg",
+    image: "/demo/cases/case-14/01.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The PDF lists a single FRAGRANCE item; cover.jpg shows the scented-candle collection. Individual candle stills exist but were not assigned as a single SKU.",
@@ -319,7 +319,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-15",
     name: "FILM CAMERA",
-    image: "/demo/cases/case-15/01.jpg",
+    image: "/demo/cases/case-15/item-film-camera.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "The film camera is clearly shown in the official gift-box still. No camera-only packshot is supplied.",
@@ -327,7 +327,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-15",
     name: "FILM STICKERS",
-    image: "/demo/cases/case-15/01.jpg",
+    image: "/demo/cases/case-15/item-film-camera.jpg",
     kind: "set-reference",
     confidence: "medium",
     note: "A film-format card/sticker ('How can someone be defined?') sits in the official box next to the film roll. Medium confidence that this is the listed 胶卷贴纸.",
@@ -511,34 +511,34 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-23",
     name: "SUNGLASSES CLIP",
-    image: "/demo/cases/case-23/cover.jpg",
-    kind: "set-reference",
+    image: "/demo/cases/case-23/item-sunglasses-clip.jpg",
+    kind: "isolated",
     confidence: "high",
-    note: "Cover labels the heart plush as CRYBABY联名墨镜夹, shown with sunglasses and other merch.",
+    note: "Crop of the panel labeled CRYBABY联名墨镜夹 in source 图片66.png. The heart plush clip is the accessory; the sunglasses beside it are marked 图示墨镜仅展示.",
   },
   {
     caseId: "case-23",
     name: "BOTTLE CAP ORNAMENT",
-    image: "/demo/cases/case-23/cover.jpg",
-    kind: "set-reference",
+    image: "/demo/cases/case-23/item-bottle-cap-ornament.jpg",
+    kind: "isolated",
     confidence: "high",
-    note: "PDF text states the limited Crybaby figurine can be used as a bottle-cap ornament (瓶盖装饰摆件). The figurine is shown on the cover (labeled 限定公仔摆件) with other merch, not on a bottle.",
+    note: "Crop of the panel labeled CRYBABY限定公仔摆件 in source 图片66.png. The PDF says this figurine can be used as the bottle-cap ornament.",
   },
   {
     caseId: "case-23",
     name: "HAIRBAND",
-    image: "/demo/cases/case-23/05.jpg",
-    kind: "set-reference",
+    image: "/demo/cases/case-23/item-hairband.jpg",
+    kind: "isolated",
     confidence: "high",
-    note: "05.jpg labels the plush headband as CRYBABY联名发带, in a merch layout with the figurine and gift packaging.",
+    note: "Crop of the panel labeled CRYBABY联名发带 in source 图片70.png.",
   },
   {
     caseId: "case-23",
     name: "HAIR CLIP",
-    image: "/demo/cases/case-23/cover.jpg",
-    kind: "context",
-    confidence: "low",
-    note: "The PDF lists a hair clip (发夹), but no clip is clearly identifiable in the supplied stills. The cover is shown as case context, not as a photo of the clip.",
+    image: "/demo/cases/case-23/item-hair-clip.jpg",
+    kind: "set-reference",
+    confidence: "high",
+    note: "Source 图片68.png is the gift lineup labeled 联名发夹. The clip is shown with the gift set, so this stays a set reference rather than a cropped single object.",
   },
   {
     caseId: "case-24",
@@ -615,7 +615,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-26",
     name: "HAIR CLIPS",
-    image: "/demo/cases/case-26/cover.jpg",
+    image: "/demo/cases/case-26/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "Cover catalog labels 联名发卡; no isolated packshot of the clips alone.",
@@ -623,7 +623,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-26",
     name: "GIFT BOX",
-    image: "/demo/cases/case-26/cover.jpg",
+    image: "/demo/cases/case-26/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "Cover catalog labels 联名礼盒.",
@@ -639,7 +639,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-26",
     name: "STICKERS",
-    image: "/demo/cases/case-26/cover.jpg",
+    image: "/demo/cases/case-26/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "Cover catalog labels 贴纸.",
@@ -647,7 +647,7 @@ export const ACCESSORY_IMAGES: AccessoryImageMapping[] = [
   {
     caseId: "case-26",
     name: "CELEBRITY PHOTO CHARM",
-    image: "/demo/cases/case-26/cover.jpg",
+    image: "/demo/cases/case-26/02.jpg",
     kind: "set-reference",
     confidence: "high",
     note: "Cover catalog labels 联名挂件 (celebrity photo charm).",

@@ -47,20 +47,19 @@ describe("homepage theme tabs and case cards", () => {
   })
 
   it("filters the homepage gallery by case theme, not leftover chip ids", () => {
-    expect(CASES).toHaveLength(29)
+    expect(CASES).toHaveLength(28)
     expect(CASES.every((item) => item.theme && THEME_LABELS.includes(item.theme))).toBe(true)
-    expect(casesForHomeTheme(CASES, "all")).toHaveLength(29)
-    expect(casesForHomeTheme(CASES, "Christmas")).toHaveLength(6)
+    expect(casesForHomeTheme(CASES, "all")).toHaveLength(28)
+    expect(casesForHomeTheme(CASES, "Christmas")).toHaveLength(5)
     expect(casesForHomeTheme(CASES, "Retro")).toHaveLength(5)
     expect(casesForHomeTheme(CASES, "Minimal")).toHaveLength(6)
     expect(casesForHomeTheme(CASES, "Playful")).toHaveLength(6)
     expect(casesForHomeTheme(CASES, "Collaboration")).toHaveLength(6)
     expect(casesForHomeTheme(CASES, "Christmas").every((item) => item.theme === "Christmas")).toBe(true)
     const byCase = Object.fromEntries(CASES.map((item) => [item.id, item.theme]))
-    const byProduct = Object.fromEntries(
-      PRODUCTS.map((item, index) => [`case-${String(index + 1).padStart(2, "0")}`, item.theme]),
-    )
-    expect(byCase).toEqual(byProduct)
+    const byProduct = Object.fromEntries(PRODUCTS.map((item) => [item.name, item.theme]))
+    const byCaseTitle = Object.fromEntries(CASES.map((item) => [item.title, item.theme]))
+    expect(byCaseTitle).toEqual(byProduct)
   })
 
   it("shows only the case title on homepage cards and keeps full prose in detail", () => {
@@ -72,5 +71,6 @@ describe("homepage theme tabs and case cards", () => {
     expect(DIALOG_SOURCE).toContain("item.takeaway")
     expect(CASES.filter((item) => item.takeaway).length).toBe(28)
     expect(CASES.filter((item) => item.description).length).toBe(28)
+    expect(CASES.every((item) => item.description && item.takeaway)).toBe(true)
   })
 })

@@ -3,7 +3,6 @@ export const BRANDS = [
   { id: "charlotte-tilbury", label: "Charlotte Tilbury" },
   { id: "dior", label: "Dior" },
   { id: "la-mer", label: "La Mer" },
-  { id: "maison-margiela", label: "Maison Margiela" },
   { id: "ysl", label: "YSL" },
   { id: "the-beast", label: "野兽派" },
   { id: "amuse", label: "Amuse" },

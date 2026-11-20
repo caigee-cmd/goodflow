@@ -74,15 +74,18 @@ export function CaseDialog({
               direction={direction}
             />
           </div>
-          <div className="mt-3 flex justify-center gap-2">
+          <div className="relative z-10 mt-3 flex justify-center gap-1">
             {item.images.map((image, dot) => (
               <button
                 key={image}
                 type="button"
                 aria-label={`Image ${dot + 1}`}
+                aria-current={dot === index}
                 onClick={() => show(dot)}
-                className={dot === index ? "size-1.5 rounded-full bg-el-black" : "size-1.5 rounded-full bg-el-line"}
-              />
+                className="flex size-6 items-center justify-center"
+              >
+                <span className={dot === index ? "size-1.5 rounded-full bg-el-black" : "size-1.5 rounded-full bg-el-line"} />
+              </button>
             ))}
           </div>
           {item.description

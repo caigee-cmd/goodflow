@@ -195,18 +195,9 @@ describe("PDF-sourced catalog copy", () => {
     expect(new Set(takeaways).size).toBe(28)
   })
 
-  it("does not invent copy for the unmatched Maison Margiela case", () => {
-    const item = CASES.find((entry) => entry.id === "case-04")!
-    expect(item.title).toBe("Maison Margiela 2026圣诞礼盒")
-    expect(item.description).toBeUndefined()
-    expect(item.takeaway).toBeUndefined()
-    expect(item.items).toEqual([])
-    const product = PRODUCTS.find((entry) => entry.id === "ext-004")!
-    expect(product.name).toBe("Maison Margiela 2026圣诞礼盒")
-    expect(product.notes).toBeUndefined()
-    expect(product.inspiration).toBeUndefined()
-    expect(product.material).toBeUndefined()
-    expect(product.packaging).toBeUndefined()
+  it("leaves out Maison Margiela because the collection markdown has no case for it", () => {
+    expect(CASES.some((entry) => entry.title.includes("Margiela"))).toBe(false)
+    expect(PRODUCTS.some((entry) => entry.name.includes("Margiela"))).toBe(false)
   })
 
   it("keeps product notes aligned to the matching case and includes listed pieces when present", () => {

@@ -74,6 +74,7 @@ export function HomeGallery() {
   const [loading, setLoading] = useState(false)
   const [openId, setOpenId] = useState<string | null>(null)
   const [productId, setProductId] = useState<string | null>(null)
+  const [productView, setProductView] = useState(0)
   const cases = useMemo(() => casesForHomeTheme(CASES, chip), [chip])
   const lanes = Array.from({ length: columns }, () => [] as Case[])
   cases.forEach((item, index) => lanes[index % columns].push(item))
@@ -156,11 +157,13 @@ export function HomeGallery() {
             </div>
           ) : null}
         </div>
-        <ArchiveRail onOpenProduct={setProductId} />
+        <ArchiveRail onOpenProduct={(id) => { setProductView(0); setProductId(id) }} />
       </div>
 
       {openId ? <CaseDialog key={openId} id={openId} onClose={() => setOpenId(null)} /> : null}
-      {productId ? <ProductDialog id={productId} onClose={() => setProductId(null)} /> : null}
+      {productId ? (
+        <ProductDialog key={`${productId}-${productView}`} id={productId} initialView={productView} onClose={() => setProductId(null)} />
+      ) : null}
     </>
   )
 }

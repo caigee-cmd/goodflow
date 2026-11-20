@@ -1,11 +1,11 @@
 "use client"
 
-import { PRODUCTS } from "@/data"
+import { DETAIL_PRODUCTS } from "@/data"
 import { campaignShort, featuredProducts } from "@/lib/catalog"
 import { PlaceholderImage } from "@/components/media/placeholder-image"
 
 export function ArchiveRail({ onOpenProduct }: { onOpenProduct: (id: string) => void }) {
-  const featured = featuredProducts(PRODUCTS)
+  const featured = featuredProducts(DETAIL_PRODUCTS)
 
   return (
     <aside className="sticky top-24 w-[320px] shrink-0 self-start">
@@ -30,9 +30,9 @@ export function ArchiveRail({ onOpenProduct }: { onOpenProduct: (id: string) => 
                     {campaignShort(item)}
                   </span>
                   {[item.material, item.size].filter(Boolean).length ? (
-                  <span className="mt-1 block truncate text-[12px] leading-[18px] text-el-taupe-ink">
-                    {[item.material, item.size].filter(Boolean).join(" · ")}
-                  </span>
+                    <span className="mt-1 block truncate text-[12px] leading-[18px] text-el-taupe-ink">
+                      {[item.material, item.size].filter(Boolean).join(" · ")}
+                    </span>
                   ) : null}
                 </span>
               </button>

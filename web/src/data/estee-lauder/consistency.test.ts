@@ -10,10 +10,10 @@ const p = (id: string) => PRODUCTS.find((x) => x.id === id)!
 
 describe("trend catalog", () => {
   it("has 29 campaign cases and products", () => {
-    expect(CASES).toHaveLength(29)
-    expect(PRODUCTS).toHaveLength(29)
-    expect(CASES.map((item) => item.id)).toEqual(Array.from({ length: 29 }, (_, i) => `case-${String(i + 1).padStart(2, "0")}`))
-    expect(PRODUCTS.map((item) => item.id)).toEqual(Array.from({ length: 29 }, (_, i) => `ext-${String(i + 1).padStart(3, "0")}`))
+    expect(CASES).toHaveLength(28)
+    expect(PRODUCTS).toHaveLength(28)
+    expect(CASES.map((item) => item.id)).not.toContain("case-04")
+    expect(PRODUCTS.map((item) => item.id)).not.toContain("ext-004")
   })
 
   it("does not invent commercial prices or sizes", () => {
@@ -35,7 +35,7 @@ describe("trend catalog", () => {
     const visible = filterProducts(PRODUCTS, DEFAULT_FILTERS)
     expect(DEFAULT_FILTERS.source).toBe("all")
     expect(DEFAULT_FILTERS.brands).toEqual([])
-    expect(visible).toHaveLength(29)
+    expect(visible).toHaveLength(28)
     expect(sortProducts(visible, "featured")[0].featured).toBe(true)
   })
 
